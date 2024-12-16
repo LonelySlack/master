@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app>
+	<servlet>
+		<servlet-name>R1</servlet-name>
+		<servlet-class>package1.LoginServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>R2</servlet-name>
+		<servlet-class>package1.DisplayServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>R3</servlet-name>
+		<servlet-class>package1.DeleteServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>R1</servlet-name>
+		<url-pattern>/LoginServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>R2</servlet-name>
+		<url-pattern>/DisplayServlet</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>R3</servlet-name>
+		<url-pattern>/DeleteServlet</url-pattern>
+	</servlet-mapping>
+	<welcome-file-list>
+		<welcome-file>login.jsp</welcome-file>
+		<welcome-file>display.jsp</welcome-file>
+		<welcome-file>delete.jsp</welcome-file>
+	</welcome-file-list>
+</web-app>
