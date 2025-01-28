@@ -171,15 +171,7 @@
 </style>
 </head>
 <body>
-    <div class="navbar">
-        <div class="logo">
-            <img src="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp" alt="Logo">
-            <span>Club Management</span>
-        </div>
-        <form action="LogoutServlet" method="post">
-            <button type="submit" class="logout">Logout</button>
-        </form>
-    </div>
+    <script id="replace_with_navbar" src="nav.js"></script>
 
     <%
         // Retrieve name from session attribute (set during login)
