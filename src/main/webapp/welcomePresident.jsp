@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Club President Dashboard</title>
+        <link rel="icon" type="image/x-icon" href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -96,7 +98,7 @@
     </style>
 </head>
 <body>
-    <div class="navbar">Club President Dashboard</div>
+<script id="replace_with_navbar" src="nav.js"></script>
     <div class="container">
         <h1>Welcome, <%= session.getAttribute("Student_Name") %>!</h1>
         <p class="center-text">Here is the list of members and pending applications for your club.</p>

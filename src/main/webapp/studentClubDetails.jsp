@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student and Club Details</title>
+    <link rel="icon" type="image/x-icon" href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -42,6 +43,7 @@
     </style>
 </head>
 <body>
+<script id="replace_with_navbar" src="nav.js"></script>
 
 <%
     String studentId = request.getParameter("studentId");
