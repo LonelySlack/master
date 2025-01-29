@@ -173,11 +173,47 @@
 <body>
     <script id="replace_with_navbar" src="nav.js"></script>
 
-    <%
-        // Retrieve name from session attribute (set during login)
-        String studentName = (String) session.getAttribute("Student_Name");
-        if (studentName == null) {
-            studentName = "Guest";
+     <%
+        // Retrieve Student_ID from session
+        String studentId = (String) session.getAttribute("Student_ID");
+        String studentName = "Guest"; // Default name
+
+        if (studentId != null) {
+            // Database connection details
+            String DB_URL = "jdbc:mysql://localhost:3306/clubmanagementsystem?useSSL=false";
+            String DB_USER = "root";
+            String DB_PASSWORD = "root";
+
+            Connection con = null;
+            PreparedStatement pst = null;
+            ResultSet rs = null;
+
+            try {
+                // Load MySQL JDBC Driver
+                Class.forName("com.mysql.jdbc.Driver");
+
+                // Establish Database Connection
+                con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+
+                // Query to fetch student name
+                String sql = "SELECT Name FROM Student WHERE Student_ID = ?";
+                pst = con.prepareStatement(sql);
+                pst.setString(1, studentId);
+                rs = pst.executeQuery();
+
+                if (rs.next()) {
+                    studentName = rs.getString("Name");
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                // Close database resources
+                if (rs != null) rs.close();
+                if (pst != null) pst.close();
+                if (con != null) con.close();
+            }
         }
     %>
 

@@ -21,7 +21,7 @@
         <!-- test -->
       
 
-        <form action="LoginServlet" method="post">
+        <form action="LoginController" method="post">
         <label for="student_id">Student ID</label>
             <div class="form-field">
                 <input type="text" name="Student_ID" placeholder="Enter Student ID" required>
@@ -34,8 +34,8 @@
             <div class="form-field">
                 <select name="Role" required>
                     <option value="" disabled selected>Select Role</option>
-                    <option value="Club President">Club President</option>
-                    <option value="General Member">General Member</option>
+                    <option value="President">President</option>
+                    <option value="Member">Member</option>
                 </select>
             </div>
             <button type="submit" class="btn">LOG IN</button>
