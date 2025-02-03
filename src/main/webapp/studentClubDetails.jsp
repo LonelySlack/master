@@ -46,7 +46,7 @@
 <script id="replace_with_navbar" src="nav.js"></script>
 
 <%
-    String studentId = request.getParameter("studentId");
+    String studentId = request.getParameter("Student_ID");
     String studentName = "";
     String clubName = "";
     String clubId = "";
