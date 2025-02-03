@@ -89,7 +89,6 @@
     </style>
 </head>
 <body>
-  <script id="replace_with_navbar" src="nav.js"></script>
     <div class="navbar">
         <div class="logo">
             <span>Club Management</span>

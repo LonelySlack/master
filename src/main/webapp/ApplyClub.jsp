@@ -56,7 +56,6 @@
     </style>
 </head>
 <body>
-  <script id="replace_with_navbar" src="nav.js"></script>
     <h1>Available Clubs</h1>
 
     <%
@@ -98,7 +97,7 @@
             <td>
                 <form action="ApplyClubServlet" method="post">
                     <input type="hidden" name="Club_ID" value="<%= rs.getInt("Club_ID") %>">
-                
+                    <input type="hidden" name="Student_ID" value="<%= studentId %>">
                     <button type="submit">Apply</button>
                 </form>
             </td>

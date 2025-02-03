@@ -219,7 +219,8 @@
 
     <div class="welcome">
         <h1>Welcome, <%= studentName %>!</h1>
-     </div>
+        <p>What would you like to do today?</p>
+    </div>
 
     <!-- Slideshow Container -->
     <div class="slideshow-container">
@@ -251,6 +252,11 @@
             <h3>View Clubs</h3>
             <p>Explore all the clubs available at your university.</p>
             <a href="ViewClubs.jsp">Go to Clubs</a>
+        </div>
+        <div class="card">
+            <h3>My Memberships</h3>
+            <p>Manage your current club memberships and applications.</p>
+            <a href="MyMemberships.jsp">View Memberships</a>
         </div>
         <div class="card">
             <h3>Apply for a Club</h3>
