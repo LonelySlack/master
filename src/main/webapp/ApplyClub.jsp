@@ -53,29 +53,66 @@
             text-align: center;
             font-size: 16px;
         }
+        .applied-message {
+            color: green;
+            text-align: center;
+            font-size: 16px;
+        }
+        .error-message {
+            color: red;
+            text-align: center;
+            font-size: 16px;
+        }
+        .success-message {
+            color: green;
+            text-align: center;
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
+    <script id="replace_with_navbar" src="nav.js"></script>
     <h1>Available Clubs</h1>
+
+    <!-- Display success or error messages -->
+    <%
+        String successMessage = request.getParameter("success");
+        String errorMessage = request.getParameter("error");
+
+        if (successMessage != null) {
+    %>
+    <div class="success-message"><%= successMessage %></div>
+    <%
+        }
+
+        if (errorMessage != null) {
+    %>
+    <div class="error-message"><%= errorMessage %></div>
+    <%
+        }
+    %>
 
     <%
         String studentId = (String) session.getAttribute("Student_ID");
         if (studentId == null) {
-            response.sendRedirect("Login.jsp");
+            response.sendRedirect("Login.jsp"); // Redirect to login if not logged in
             return;
         }
 
         boolean hasClubs = false;
+        Connection con = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
+
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/clubmanagementsystem", "root", "root");
+            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/clubmanagementsystem", "root", "root");
 
             // Fetch all clubs
             String query = "SELECT Club_ID, Club_Name, Club_Desc, Club_Est_Date FROM club";
-            PreparedStatement pst = con.prepareStatement(query);
-            ResultSet rs = pst.executeQuery();
+            pst = con.prepareStatement(query);
+            rs = pst.executeQuery();
     %>
-
     <table>
         <tr>
             <th>Club ID</th>
@@ -84,32 +121,67 @@
             <th>Established Date</th>
             <th>Action</th>
         </tr>
-
         <%
             while (rs.next()) {
                 hasClubs = true;
+                int clubId = rs.getInt("Club_ID");
+                String clubName = rs.getString("Club_Name");
+                String clubDesc = rs.getString("Club_Desc");
+                java.sql.Date clubEstDate = rs.getDate("Club_Est_Date");
+
+                // Check if the student has already applied to this club
+                String checkQuery = "SELECT COUNT(*) AS Application_Count FROM club_member WHERE Student_ID = ? AND Club_ID = ?";
+                PreparedStatement checkPst = con.prepareStatement(checkQuery);
+                checkPst.setString(1, studentId);
+                checkPst.setInt(2, clubId);
+                ResultSet checkRs = checkPst.executeQuery();
+
+                boolean alreadyApplied = false;
+                if (checkRs.next() && checkRs.getInt("Application_Count") > 0) {
+                    alreadyApplied = true;
+                }
+                checkRs.close();
+                checkPst.close();
         %>
         <tr>
-            <td><%= rs.getInt("Club_ID") %></td>
-            <td><%= rs.getString("Club_Name") %></td>
-            <td><%= rs.getString("Club_Desc") %></td>
-            <td><%= rs.getDate("Club_Est_Date") %></td>
+            <td><%= clubId %></td>
+            <td><%= clubName %></td>
+            <td><%= clubDesc.length() > 50 ? clubDesc.substring(0, 50) + "..." : clubDesc %></td>
+            <td><%= clubEstDate %></td>
             <td>
+                <%
+                    if (alreadyApplied) {
+                %>
+                <span class="applied-message">Already Applied</span>
+                <%
+                    } else {
+                %>
                 <form action="ApplyClubServlet" method="post">
-                    <input type="hidden" name="Club_ID" value="<%= rs.getInt("Club_ID") %>">
+                    <input type="hidden" name="Club_ID" value="<%= clubId %>">
                     <input type="hidden" name="Student_ID" value="<%= studentId %>">
                     <button type="submit">Apply</button>
                 </form>
+                <%
+                    }
+                %>
             </td>
         </tr>
         <%
             }
             rs.close();
             pst.close();
-            con.close();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (con != null) {
+                try {
+                    con.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
+
         if (!hasClubs) {
         %>
         <tr>
