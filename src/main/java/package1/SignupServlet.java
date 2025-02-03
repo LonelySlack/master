@@ -23,7 +23,6 @@ public class SignupServlet extends HttpServlet {
         // Retrieve data from the form
         String studentId = request.getParameter("student_id");
         String name = request.getParameter("name");
-        String ic = request.getParameter("ic");
         String email = request.getParameter("email");
         String contactNum = request.getParameter("cont_num");
         String faculty = request.getParameter("faculty");
@@ -52,7 +51,6 @@ public class SignupServlet extends HttpServlet {
             pst.setString(4, contactNum);
             pst.setString(5, faculty);
             pst.setString(6, program);
-            pst.setString(7, year);  // Assuming year of study is stored in "Status" column
             pst.setString(8, password); // For production, hash this password
 
             int rowsInserted = pst.executeUpdate();

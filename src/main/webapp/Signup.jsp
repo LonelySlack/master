@@ -9,8 +9,7 @@
 <link rel="icon" type="image/x-icon"
 	href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
 <script>
-    // Client-side validation for email format
-    function validateForm() {
+     function validateForm() {
         const email = document.getElementById("email").value;
         const regex = /^[a-zA-Z0-9._-]+@student\.uitm\.edu\.my$/; // Example: Validating UiTM email format
         if (!regex.test(email)) {
@@ -56,8 +55,12 @@
 			</div>
 			<label for="faculty">Faculty</label>
 			<div class="form-field d-flex align-items-center">
-				<input type="text" name="faculty" id="faculty" placeholder="Enter Faculty"
-					required>
+				<SELECT name="faculty" id="faculty" required>
+					<option></option> 
+					<OPTION>KOLEJ PENGAJIAN PENGKOMPUTERAAN INFORMATIK DAN MATEMATIK</OPTION>
+					<option>FAKULTI SAINS GUNAAN</option>
+					<option>FAKULTI PERAKAUNAN</option>
+					</SELECT>
 			</div>
 			<label for="program">Program</label>
 			<div class="form-field d-flex align-items-center">
