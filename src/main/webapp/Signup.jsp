@@ -75,7 +75,7 @@
 			<label for="pwd">Password</label>
 			<div class="form-field d-flex align-items-center">
 				<input type="password" name="password" id="pwd"
-					placeholder="Enter Password" minlength="8" required>
+					placeholder="Enter Password" required>
 			</div>
 			</div>
 			<button type="submit" class="btn mt-3">SIGN UP</button>
