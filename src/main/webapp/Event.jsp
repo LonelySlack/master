@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            background: linear-gradient(to right,  #4facfe, #00f2fe);
             color: #333;
             margin: 0;
             padding: 20px;
