@@ -10,7 +10,7 @@
     <link rel="icon" type="image/x-icon"
     href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
     <style>
-        /* Prefix all classes with "profile-" to avoid conflicts */
+        /* Prefix all classes with "profile-" to avoid conflicts helep*/
         body {
             font-family: Arial, sans-serif;
             background: linear-gradient(to right, #4facfe, #00f2fe);
