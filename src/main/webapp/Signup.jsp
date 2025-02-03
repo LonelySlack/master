@@ -43,11 +43,7 @@
 				<input type="text" name="name" id="name"
 					placeholder="Enter Full Name" required>
 			</div>
-			<label for="ic">IC Number</label>
-			<div class="form-field d-flex align-items-center">
-				<input type="text" name="ic" id="ic" placeholder="Enter IC Number"
-					required>
-			</div>
+			
 			<label for="email">Email</label>
 			<div class="form-field d-flex align-items-center">
 				<input type="email" name="email" id="email"

@@ -42,19 +42,18 @@ public class SignupServlet extends HttpServlet {
             con = DriverManager.getConnection("jdbc:mysql://localhost:3306/clubmanagementsystem", "root", "root");
 
             // Insert query
-            String sql = "INSERT INTO student (Student_ID, Name, IC_Num, Email, Contact_Num, Faculty, Program, Status, Password) " +
+            String sql = "INSERT INTO student (Student_ID, Name,Email, Contact_Num, Faculty, Program, Status, Password) " +
                          "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
             pst = con.prepareStatement(sql);
             pst.setString(1, studentId);
             pst.setString(2, name);
-            pst.setString(3, ic);
-            pst.setString(4, email);
-            pst.setString(5, contactNum);
-            pst.setString(6, faculty);
-            pst.setString(7, program);
-            pst.setString(8, year);  // Assuming year of study is stored in "Status" column
-            pst.setString(9, password); // For production, hash this password
+            pst.setString(3, email);
+            pst.setString(4, contactNum);
+            pst.setString(5, faculty);
+            pst.setString(6, program);
+            pst.setString(7, year);  // Assuming year of study is stored in "Status" column
+            pst.setString(8, password); // For production, hash this password
 
             int rowsInserted = pst.executeUpdate();
 
