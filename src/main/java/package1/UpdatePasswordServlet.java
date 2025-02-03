@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -18,14 +17,13 @@ public class UpdatePasswordServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String lastEmail = request.getParameter("lastEmail");
-        String icDigits = request.getParameter("icDigits");
-        String phoneNumber = request.getParameter("phoneNumber");
+        String studentid = request.getParameter("student_id");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
 
         // Ensure the passwords match
         if (!newPassword.equals(confirmPassword)) {
-            response.sendRedirect("ResetPassword.jsp?message=Passwords do not match.");
+            showAlertAndRedirect(response, "Passwords do not match.", "ResetPassword.jsp");
             return;
         }
 
@@ -37,13 +35,11 @@ public class UpdatePasswordServlet extends HttpServlet {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword)) {
-                // Validate the email, IC number, and phone number
-                String validateSql = "SELECT * FROM student WHERE Email = ? AND SUBSTRING(IC_Num, -4) = ? AND Contact_Num = ?";
+                // Validate the email and student ID
+                String validateSql = "SELECT * FROM student WHERE Email = ? AND Student_ID = ?";
                 try (PreparedStatement validatePst = con.prepareStatement(validateSql)) {
                     validatePst.setString(1, lastEmail);
-                    validatePst.setString(2, icDigits);
-                    validatePst.setString(3, phoneNumber);
-
+                    validatePst.setString(2, studentid);
                     try (ResultSet rs = validatePst.executeQuery()) {
                         if (rs.next()) {
                             // Update the password
@@ -51,23 +47,38 @@ public class UpdatePasswordServlet extends HttpServlet {
                             try (PreparedStatement updatePst = con.prepareStatement(updateSql)) {
                                 updatePst.setString(1, newPassword);
                                 updatePst.setString(2, lastEmail);
-
                                 int rowsUpdated = updatePst.executeUpdate();
                                 if (rowsUpdated > 0) {
-                                    response.sendRedirect("Login.jsp?message=Password updated successfully!");
+                                    showAlertAndRedirect(response, "Password updated successfully!", "Login.jsp");
                                 } else {
-                                    response.sendRedirect("ResetPassword.jsp?message=Failed to update password.");
+                                    showAlertAndRedirect(response, "Failed to update password.", "ResetPassword.jsp");
                                 }
                             }
                         } else {
-                            response.sendRedirect("ResetPassword.jsp?message=Invalid details provided.");
+                            showAlertAndRedirect(response, "Invalid details provided.", "ResetPassword.jsp");
                         }
                     }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("ResetPassword.jsp?message=An error occurred. Please try again.");
+            showAlertAndRedirect(response, "An error occurred. Please try again.", "ResetPassword.jsp");
         }
+    }
+
+    /**
+     * Helper method to show an alert box and redirect to a specific page.
+     *
+     * @param response The HttpServletResponse object.
+     * @param message  The message to display in the alert box.
+     * @param redirectUrl The URL to redirect to after the alert is dismissed.
+     * @throws IOException If an I/O error occurs.
+     */
+    private void showAlertAndRedirect(HttpServletResponse response, String message, String redirectUrl) throws IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        response.getWriter().println("<script type='text/javascript'>");
+        response.getWriter().println("alert('" + message + "');");
+        response.getWriter().println("window.location.href='" + redirectUrl + "';");
+        response.getWriter().println("</script>");
     }
 }
