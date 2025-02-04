@@ -5,10 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Club Events</title>
+        <link rel="icon" type="image/x-icon" href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            background: linear-gradient(to right,  #4facfe, #00f2fe);
             color: #333;
             margin: 0;
             padding: 20px;
@@ -91,7 +92,7 @@
         boolean hasEvents = false;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/clubmanagementsystem", "root", "root");
+            Connection con = DriverManager.getConnection("jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC", "u9946_Kmmw1Vvrcg", "V6y2rsxfO0B636FUWqU^Ia=F");
 
             // Fetch all events for clubs
             String query = "SELECT e.Event_ID, e.Event_Name, e.Event_Date, e.Event_Desc, c.Club_Name FROM event e JOIN club c ON e.Club_ID = c.Club_ID ORDER BY e.Event_Date ASC";

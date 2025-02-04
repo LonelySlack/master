@@ -14,7 +14,7 @@
     
 <div class="table-wrapper">
     <h2 style="text-align: center; margin-bottom: 20px;">Delete Student</h2>
-    
+</div>    
     <!-- Search Bar -->
     <div class="search-bar" style="text-align: center; margin-bottom: 20px;">
         <form method="post" action="DeleteStudentServlet">
