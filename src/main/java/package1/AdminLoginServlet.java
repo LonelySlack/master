@@ -16,9 +16,20 @@ public class AdminLoginServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     // Use the provided database credentials (preferably load from environment variables)
-    private static final String DB_URL = System.getenv("DB_URL");
-    private static final String DB_USER = System.getenv("DB_USER");
-    private static final String DB_PASSWORD = System.getenv("DB_PASSWORD");
+ // Use the provided database credentials
+    private static final String DB_URL = "jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC";
+    private static final String DB_USER = "u9946_Kmmw1Vvrcg";
+    private static final String DB_PASSWORD = "V6y2rsxfO0B636FUWqU^Ia=F";
+    
+    static {
+        try {
+            // Register the MySQL JDBC Driver
+            Class.forName("com.mysql.jdbc.Driver");  // Correct MySQL driver
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw new RuntimeException("MySQL JDBC Driver not found.");
+        }
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
