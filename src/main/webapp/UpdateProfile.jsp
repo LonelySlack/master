@@ -66,6 +66,15 @@
     </script>
 </head>
 <body>
+
+<%-- ✅ Prevent Caching --%>
+<%
+    // Set HTTP headers to prevent caching
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+    response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+    response.setHeader("Expires", "0"); // Proxies
+%>
+
     <script id="replace_with_navbar" src="nav.js"></script>
     <div class="wrapper">
         <div class="text-center mt-4 name">

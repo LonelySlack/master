@@ -138,6 +138,28 @@
             e.printStackTrace();
         }
     %>
+    
+    <%-- ✅ Prevent Caching --%>
+<%
+    // Set HTTP headers to prevent caching
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+    response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+    response.setHeader("Expires", "0"); // Proxies
+
+    // Validate Session
+    if (session == null || session.getAttribute("Student_ID") == null) {
+        response.sendRedirect("Login.jsp"); // Redirect if session is invalid
+        return;
+    }
+
+    // Retrieve session attributes
+    String studentName = (String) session.getAttribute("Name");
+
+    // Ensure name is not null
+    if (studentName == null) {
+        studentName = "Guest";
+    }
+%>
 
     <div class="profile-container">
         <h1 class="profile-h1">Profile</h1>

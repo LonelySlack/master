@@ -108,13 +108,36 @@
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/clubmanagementsystem", "root", "root");
+            con = DriverManager.getConnection("jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC", "u9946_Kmmw1Vvrcg", "V6y2rsxfO0B636FUWqU^Ia=F");
 
             // Fetch all clubs
             String query = "SELECT Club_ID, Club_Name, Club_Desc, Club_Est_Date FROM club";
             pst = con.prepareStatement(query);
             rs = pst.executeQuery();
     %>
+    
+    <%-- ✅ Prevent Caching --%>
+<%
+    // Set HTTP headers to prevent caching
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+    response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+    response.setHeader("Expires", "0"); // Proxies
+
+    // Validate Session
+    if (session == null || session.getAttribute("Student_ID") == null) {
+        response.sendRedirect("Login.jsp"); // Redirect if session is invalid
+        return;
+    }
+
+    // Retrieve session attributes
+    String studentName = (String) session.getAttribute("Name");
+
+    // Ensure name is not null
+    if (studentName == null) {
+        studentName = "Guest";
+    }
+%>
+    
     <table>
         <tr>
             <th>Club ID</th>

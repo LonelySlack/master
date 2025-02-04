@@ -6,8 +6,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @WebServlet(name = "LogoutServlet", urlPatterns = { "/LogoutServlet" })
 public class LogoutServlet extends HttpServlet {
@@ -20,7 +20,22 @@ public class LogoutServlet extends HttpServlet {
             session.invalidate(); // Invalidate the session to clear all session attributes
         }
 
-        // Redirect the user to the login page after logout
-        response.sendRedirect("Login.jsp?message=You have been logged out successfully!");
+        // Set response content type to HTML
+        response.setContentType("text/html");
+        PrintWriter out = response.getWriter();
+
+        // Write JavaScript to display an alert box and redirect to the login page
+        out.println("<!DOCTYPE html>");
+        out.println("<html>");
+        out.println("<head>");
+        out.println("<title>Logout</title>");
+        out.println("<script type=\"text/javascript\">");
+        out.println("alert('You have been logged out successfully!');");
+        out.println("window.location.href = 'Login.jsp';"); // Redirect to Login.jsp after the alert
+        out.println("</script>");
+        out.println("</head>");
+        out.println("<body>");
+        out.println("</body>");
+        out.println("</html>");
     }
 }

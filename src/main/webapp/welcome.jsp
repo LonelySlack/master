@@ -6,38 +6,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome Dashboard</title>
+    <link rel="icon" type="image/x-icon"
+        href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: Arial, sans-serif;
             background: linear-gradient(to right, #4facfe, #00f2fe);
-        }
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #00f2fe;
-            padding: 15px 30px;
-            color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .navbar .logo span {
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .navbar .logout {
-            background: white;
-            color: #00f2fe;
-            padding: 8px 15px;
-            border: none;
-            border-radius: 5px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-        .navbar .logout:hover {
-            background: #d4f5fe;
         }
         .welcome {
             text-align: center;
@@ -85,36 +61,40 @@
         .card a:hover {
             background: #4facfe;
         }
+        .slideshow-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 30px;
+            flex-wrap: wrap;
+        }
     </style>
 </head>
 <body>
+    <script id="replace_with_navbar" src="nav.js"></script>
+    
+    <%-- ✅ Prevent Caching --%>
+<%
+    // Set HTTP headers to prevent caching
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+    response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+    response.setHeader("Expires", "0"); // Proxies
 
-    <%-- ✅ Validate Session --%>
-    <%
-        if (session == null || session.getAttribute("Student_ID") == null) {
-            response.sendRedirect("Login.jsp"); // Redirect if session is invalid
-            return;
-        }
+    // Validate Session
+    if (session == null || session.getAttribute("Student_ID") == null) {
+        response.sendRedirect("Login.jsp"); // Redirect if session is invalid
+        return;
+    }
 
-        // Retrieve session attributes
-        String studentId = (String) session.getAttribute("Student_ID");
-        String studentName = (String) session.getAttribute("Name");
+    // Retrieve session attributes
+    String studentId = (String) session.getAttribute("Student_ID");
+    String studentName = (String) session.getAttribute("Name");
 
-        // Ensure name is not null
-        if (studentName == null) {
-            studentName = "Guest";
-        }
-    %>
-
-    <div class="navbar">
-        <div class="logo">
-            <span>Club Management System</span>
-        </div>
-        <form action="Logout.jsp" method="post">
-            <button type="submit" class="logout">Logout</button>
-        </form>
-    </div>
-
+    // Ensure name is not null
+    if (studentName == null) {
+        studentName = "Guest";
+    }
+%>
     <div class="welcome">
         <h1>Welcome, <%= studentName %>!</h1>
         <p>What would you like to do today?</p>
@@ -132,11 +112,12 @@
             boolean hasEvents = false;
 
             try {
+                // Use the correct MySQL driver
                 Class.forName("com.mysql.cj.jdbc.Driver");
                 con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-
-                String query = "SELECT Event_ID, Event_Name, Event_Desc, Event_Date FROM event WHERE Event_Status = 'Scheduled' ORDER BY Event_Date ASC LIMIT 3";
+                String query = "SELECT Event_ID, Event_Name, Event_Desc, Event_Date FROM event WHERE Event_Status = ? ORDER BY Event_Date ASC LIMIT 3";
                 pst = con.prepareStatement(query);
+                pst.setString(1, "Scheduled"); // Prevent SQL Injection
                 rs = pst.executeQuery();
 
                 while (rs.next()) {
@@ -155,11 +136,13 @@
         <%
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                // Log the error instead of printing stack trace
+                System.err.println("Database Error: " + e.getMessage());
             } finally {
-                if (rs != null) rs.close();
-                if (pst != null) pst.close();
-                if (con != null) con.close();
+                // Properly close resources
+                try { if (rs != null) rs.close(); } catch (SQLException e) { /* Ignored */ }
+                try { if (pst != null) pst.close(); } catch (SQLException e) { /* Ignored */ }
+                try { if (con != null) con.close(); } catch (SQLException e) { /* Ignored */ }
             }
 
             if (!hasEvents) {
@@ -195,6 +178,5 @@
             <a href="Profile.jsp">Go to Profile</a>
         </div>
     </div>
-
 </body>
 </html>
