@@ -13,10 +13,9 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
-	<classpathentry kind="lib" path="C:/Users/Farhan Tagudin/Downloads/apache-tomcat-10.1.31/lib/servlet-api.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="https://jakarta.ee/specifications/servlet/6.0/apidocs/"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="lib" path="C:/Users/aqil2/Downloads/mysql-connector-j-9.1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/aqil2/Downloads/mysql-connector-j-9.0.0.jar"/>
+	<classpathentry kind="lib" path="C:/apache-tomcat-10.1.9/lib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="C:/apache-tomcat-10.1.9/lib/servlet-api.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
