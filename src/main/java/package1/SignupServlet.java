@@ -22,7 +22,6 @@ public class SignupServlet extends HttpServlet {
         // Retrieve data from the form
         String studentId = request.getParameter("student_id");
         String name = request.getParameter("name");
-        String ic = request.getParameter("ic");
         String email = request.getParameter("email");
         String contactNum = request.getParameter("cont_num");
         String faculty = request.getParameter("faculty");
@@ -62,19 +61,7 @@ public class SignupServlet extends HttpServlet {
             pstStudent.setString(7, "Active"); // Default status
             pstStudent.setString(8, password); // For production, hash this password
 
-<<<<<<< master
             int rowsInsertedStudent = pstStudent.executeUpdate();
-=======
-            pst = con.prepareStatement(sql);
-            pst.setString(1, studentId);
-            pst.setString(2, name);
-            pst.setString(3, email);
-            pst.setString(4, contactNum);
-            pst.setString(5, faculty);
-            pst.setString(6, program);
-            pst.setString(7, year);  // Assuming year of study is stored in "Status" column
-            pst.setString(8, password); // For production, hash this password
->>>>>>> dab1054 atok luuuu
 
             if (rowsInsertedStudent > 0) {
                 // Insert query for Club_Member table
@@ -131,3 +118,4 @@ public class SignupServlet extends HttpServlet {
         out.close();
     }
 }
+   
