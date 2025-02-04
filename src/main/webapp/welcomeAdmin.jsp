@@ -4,8 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Manage Clubs</title>
-    <link rel="icon" type="image/x-icon" href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
+    <title>Admin Dashboard - Approve Applications</title>
+        <link rel="icon" type="image/x-icon" href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
+    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -69,55 +70,58 @@
 </head>
 <body>
 <script id="replace_with_navbar" src="nav.js"></script>
-    <h1>Welcome,Admin!</h1>
+    <h1>Welcome, Admin!</h1>
+
     <table>
         <tr>
-            <th>Club ID</th>
-            <th>Club Name</th>
-            <th>Description</th>
-            <th>Email</th>
-            <th>Category</th>
-            <th>Status</th>
+            <th>Application ID</th>
+            <th>Application Date</th>
+            <th>Approval Status</th>
+            <th>Student ID</th>
+            <th>Admin ID</th>
             <th>Update Status</th>
             <th>View Details</th>
         </tr>
+
         <%
             boolean hasData = false; // To check if data exists
             try {
                 // Load JDBC driver
                 Class.forName("com.mysql.jdbc.Driver");
+
                 // Database connection
                 Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/clubmanagementsystem", "root", "root");
-                // Query to fetch all clubs
-                String query = "SELECT * FROM club";
+
+                // Query to fetch all applications
+                String query = "SELECT * FROM president_application";
                 PreparedStatement pst = con.prepareStatement(query);
                 ResultSet rs = pst.executeQuery();
+
                 while (rs.next()) {
                     hasData = true; // Flag to indicate data exists
         %>
         <tr>
-            <td><%= rs.getInt("Club_ID") %></td>
-            <td><%= rs.getString("Club_Name") %></td>
-            <td><%= rs.getString("Club_Desc") %></td>
-            <td><%= rs.getString("Club_Email") %></td>
-            <td><%= rs.getString("Club_Category") %></td>
-            <td><%= rs.getString("Club_Status") %></td>
+            <td><%= rs.getInt("Application_ID") %></td>
+            <td><%= rs.getDate("Application_Date") %></td>
+            <td><%= rs.getString("Approval_Status") %></td>
+            <td><%= rs.getString("Student_ID") %></td>
+            <td><%= rs.getString("Admin_ID") %></td>
             <td>
-                <form action="UpdateClubStatusServlet" method="post">
-                    <input type="hidden" name="Club_ID" value="<%= rs.getInt("Club_ID") %>">
-                    <select name="Club_Status" required>
+                <form action="UpdateApprovalServlet" method="post">
+                    <input type="hidden" name="Application_ID" value="<%= rs.getInt("Application_ID") %>">
+                    <select name="Approval_Status" required>
                         <option value="" disabled selected>Change Status</option>
-                        <option value="Active" <%= "Active".equals(rs.getString("Club_Status")) ? "selected" : "" %>>Active</option>
-                        <option value="Inactive" <%= "Inactive".equals(rs.getString("Club_Status")) ? "selected" : "" %>>Inactive</option>
-                        <option value="Suspended" <%= "Suspended".equals(rs.getString("Club_Status")) ? "selected" : "" %>>Suspended</option>
+                        <option value="Approved" <%= "Approved".equals(rs.getString("Approval_Status")) ? "selected" : "" %>>Approved</option>
+                        <option value="Pending" <%= "Pending".equals(rs.getString("Approval_Status")) ? "selected" : "" %>>Pending</option>
+                        <option value="Rejected" <%= "Rejected".equals(rs.getString("Approval_Status")) ? "selected" : "" %>>Rejected</option>
                     </select>
                     <button type="submit">Update</button>
                 </form>
             </td>
             <td>
-                <!-- View details button that links to the club details page -->
-                <form action="Admin_clubdetails.jsp" method="get">
-                    <input type="hidden" name="clubId" value="<%= rs.getInt("Club_ID") %>">
+                <!-- View details button that links to the student and club details page -->
+                <form action="studentClubDetails.jsp" method="get">
+                    <input type="hidden" name="studentId" value="<%= rs.getString("Student_ID") %>">
                     <button type="submit" class="view-details-btn">View Details</button>
                 </form>
             </td>
@@ -130,15 +134,16 @@
             } catch (Exception e) {
         %>
         <tr>
-            <td colspan="8" class="no-data">Error: <%= e.getMessage() %></td>
+            <td colspan="7" class="no-data">Error: <%= e.getMessage() %></td>
         </tr>
         <%
                 e.printStackTrace();
             }
+
             if (!hasData) {
         %>
         <tr>
-            <td colspan="8" class="no-data">No clubs found.</td>
+            <td colspan="7" class="no-data">No applications found.</td>
         </tr>
         <%
             }

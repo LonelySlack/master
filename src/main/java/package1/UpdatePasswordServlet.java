@@ -1,8 +1,10 @@
 package package1;
 
 import java.io.IOException;
-import java.sql.*;
-
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,61 +15,64 @@ import jakarta.servlet.http.HttpServletResponse;
 public class UpdatePasswordServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    private static final String DB_URL = "jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC";
-    private static final String DB_USER = "u9946_Kmmw1Vvrcg";
-    private static final String DB_PASSWORD = "V6y2rsxfO0B636FUWqU^Ia=F";
-
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String lastEmail = request.getParameter("lastEmail");
-        String studentId = request.getParameter("student_id");
+        String studentid = request.getParameter("student_id");
         String newPassword = request.getParameter("newPassword");
         String confirmPassword = request.getParameter("confirmPassword");
 
-        // ✅ Ensure passwords match before proceeding
+        // Ensure the passwords match
         if (!newPassword.equals(confirmPassword)) {
-            showAlertAndRedirect(response, "❌ Passwords do not match.", "ResetPassword.jsp");
+            showAlertAndRedirect(response, "Passwords do not match.", "ResetPassword.jsp");
             return;
         }
 
-        try {
-            Class.forName("com.mysql.jdbc.Driver"); // ✅ Use the correct driver
+        // Database connection details
+        String dbURL = "jdbc:mysql://localhost:3306/clubmanagementsystem";
+        String dbUser = "root";
+        String dbPassword = "root";
 
-            try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-                // ✅ Check if the email and student ID exist
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword)) {
+                // Validate the email and student ID
                 String validateSql = "SELECT * FROM student WHERE Email = ? AND Student_ID = ?";
                 try (PreparedStatement validatePst = con.prepareStatement(validateSql)) {
                     validatePst.setString(1, lastEmail);
-                    validatePst.setString(2, studentId);
-
+                    validatePst.setString(2, studentid);
                     try (ResultSet rs = validatePst.executeQuery()) {
                         if (rs.next()) {
-                            // ✅ Update the password
+                            // Update the password
                             String updateSql = "UPDATE student SET Password = ? WHERE Email = ?";
                             try (PreparedStatement updatePst = con.prepareStatement(updateSql)) {
-                                updatePst.setString(1, newPassword); // Consider hashing this in the future
+                                updatePst.setString(1, newPassword);
                                 updatePst.setString(2, lastEmail);
-
                                 int rowsUpdated = updatePst.executeUpdate();
                                 if (rowsUpdated > 0) {
-                                    showAlertAndRedirect(response, "✅ Password updated successfully!", "Login.jsp");
+                                    showAlertAndRedirect(response, "Password updated successfully!", "Login.jsp");
                                 } else {
-                                    showAlertAndRedirect(response, "❌ Failed to update password.", "ResetPassword.jsp");
+                                    showAlertAndRedirect(response, "Failed to update password.", "ResetPassword.jsp");
                                 }
                             }
                         } else {
-                            showAlertAndRedirect(response, "❌ Invalid email or student ID provided.", "ResetPassword.jsp");
+                            showAlertAndRedirect(response, "Invalid details provided.", "ResetPassword.jsp");
                         }
                     }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            showAlertAndRedirect(response, "❌ An error occurred. Please try again.", "ResetPassword.jsp");
+            showAlertAndRedirect(response, "An error occurred. Please try again.", "ResetPassword.jsp");
         }
     }
 
     /**
-     * ✅ Helper method to show an alert box and redirect to a specific page.
+     * Helper method to show an alert box and redirect to a specific page.
+     *
+     * @param response The HttpServletResponse object.
+     * @param message  The message to display in the alert box.
+     * @param redirectUrl The URL to redirect to after the alert is dismissed.
+     * @throws IOException If an I/O error occurs.
      */
     private void showAlertAndRedirect(HttpServletResponse response, String message, String redirectUrl) throws IOException {
         response.setContentType("text/html;charset=UTF-8");
