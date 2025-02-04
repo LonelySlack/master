@@ -19,7 +19,7 @@ public class ApproveMemberServlet extends HttpServlet {
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/clubmanagementsystem", "root", "root");
+            con = DriverManager.getConnection("jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC", "u9946_Kmmw1Vvrcg", "V6y2rsxfO0B636FUWqU^Ia=F");
 
             // Update the Member_Status to "Active"
             String updateQuery = "UPDATE club_member SET Member_Status = 'Active' WHERE Club_Member_ID = ?";

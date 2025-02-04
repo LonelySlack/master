@@ -24,7 +24,8 @@ public class SaveMemberServlet extends HttpServlet {
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/clubmanagementsystem", "root", "root");
+            Connection con = DriverManager.getConnection("jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC", "u9946_Kmmw1Vvrcg", "V6y2rsxfO0B636FUWqU^Ia=F");
+
 
             // SQL query to update member details
             String query = "UPDATE club_member SET Member_Status = ?, Role_ID = ?, Register_Date = ? WHERE Club_Member_ID = ?";

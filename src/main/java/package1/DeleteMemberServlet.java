@@ -22,7 +22,7 @@ public class DeleteMemberServlet extends HttpServlet {
         try {
             // Load MySQL Driver and establish connection
             Class.forName("com.mysql.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/clubmanagementsystem", "root", "root");
+            Connection con = DriverManager.getConnection("jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC", "u9946_Kmmw1Vvrcg", "V6y2rsxfO0B636FUWqU^Ia=F");
 
             // SQL query to delete a member
             String query = "DELETE FROM club_member WHERE Club_Member_ID = ?";

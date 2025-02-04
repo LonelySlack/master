@@ -21,7 +21,7 @@ public class DeleteProfileServlet extends HttpServlet {
         if (studentId != null) {
             try {
                 Class.forName("com.mysql.jdbc.Driver");
-                Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/clubmanagementsystem", "root", "root");
+                Connection con = DriverManager.getConnection("jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC", "u9946_Kmmw1Vvrcg", "V6y2rsxfO0B636FUWqU^Ia=F");
 
                 String sql = "DELETE FROM student WHERE Student_ID = ?";
                 PreparedStatement pst = con.prepareStatement(sql);

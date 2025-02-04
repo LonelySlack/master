@@ -36,7 +36,7 @@ public class RegisterForEventServlet extends HttpServlet {
         try {
             // Load JDBC driver and establish connection
             Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/clubmanagementsystem", "root", "root");
+            con = DriverManager.getConnection("jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC", "u9946_Kmmw1Vvrcg", "V6y2rsxfO0B636FUWqU^Ia=F");
 
             // Check if the event exists and is open for registration
             String checkEventQuery = "SELECT Event_Status, Number_Joinning, Max_Participants FROM event WHERE Event_ID = ?";

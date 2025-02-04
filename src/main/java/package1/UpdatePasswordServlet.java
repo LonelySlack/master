@@ -28,9 +28,9 @@ public class UpdatePasswordServlet extends HttpServlet {
         }
 
         // Database connection details
-        String dbURL = "jdbc:mysql://localhost:3306/clubmanagementsystem";
-        String dbUser = "root";
-        String dbPassword = "root";
+        String dbURL = "jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC";
+        String dbUser = "u9946_Kmmw1Vvrcg";
+        String dbPassword = "V6y2rsxfO0B636FUWqU^Ia=F";
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
