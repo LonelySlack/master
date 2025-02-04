@@ -190,8 +190,7 @@
    
     <div class="welcome">
         <h1>Welcome, <%= studentName %>!</h1>
-        <p>What would you like to do today?</p>
-    </div>
+        </div>
     <!-- Slideshow Container -->
     <div class="slideshow-container">
         <%

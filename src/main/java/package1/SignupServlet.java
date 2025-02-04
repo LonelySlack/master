@@ -79,7 +79,6 @@ public class SignupServlet extends HttpServlet {
                 pstClubMember.setInt(4, roleId);
 
                 int rowsInsertedClubMember = pstClubMember.executeUpdate();
-//test
                 if (rowsInsertedClubMember > 0) {
                     // Success message
                     out.println("<script type=\"text/javascript\">");
