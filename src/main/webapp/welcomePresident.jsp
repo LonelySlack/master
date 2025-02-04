@@ -98,7 +98,7 @@
     </style>
 </head>
 <body>
-<script id="replace_with_navbar" src="nav.js"></script>
+<script id="replace_with_presidentnavbar" src="presidentnavbar.js"></script>
     <div class="container">
         <h1>Welcome, <%= session.getAttribute("Student_Name") %>!</h1>
         <p class="center-text">Here is the list of members and pending applications for your club.</p>

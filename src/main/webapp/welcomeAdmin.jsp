@@ -69,7 +69,7 @@
     </style>
 </head>
 <body>
-<script id="replace_with_navbar" src="nav.js"></script>
+<script id="replace_with_adminnavbar" src="adminnavbar.js"></script>
     <h1>Welcome, Admin!</h1>
 
     <table>
