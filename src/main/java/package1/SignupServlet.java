@@ -14,13 +14,15 @@ import jakarta.servlet.http.HttpServletResponse;
 public class SignupServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
+    // ✅ Correct Database Credentials
     private static final String DB_URL = "jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC";
     private static final String DB_USER = "u9946_Kmmw1Vvrcg";
     private static final String DB_PASSWORD = "V6y2rsxfO0B636FUWqU^Ia=F";
 
     static {
         try {
-            Class.forName("com.mysql.jdbc.Driver"); // Use the correct MySQL JDBC driver
+            // ✅ Use the correct MySQL JDBC Driver
+            Class.forName("com.mysql.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             throw new RuntimeException("MySQL JDBC Driver not found.");
@@ -31,6 +33,7 @@ public class SignupServlet extends HttpServlet {
         response.setContentType("text/html");
         PrintWriter out = response.getWriter();
 
+        // ✅ Retrieve form data
         String studentId = request.getParameter("student_id");
         String name = request.getParameter("name");
         String email = request.getParameter("email");
@@ -40,16 +43,15 @@ public class SignupServlet extends HttpServlet {
         String icNum = request.getParameter("ic_num");
         String password = request.getParameter("password");
 
-        // Check if Student_ID already exists
+        // ✅ Check if Student_ID already exists
         String checkSql = "SELECT COUNT(*) FROM student WHERE Student_ID = ?";
         String insertSql = "INSERT INTO student (Student_ID, Name, IC_Num, Email, Contact_Num, Faculty, Program, Status, Password) " +
                            "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-             PreparedStatement checkStmt = con.prepareStatement(checkSql);
-             PreparedStatement insertStmt = con.prepareStatement(insertSql)) {
+             PreparedStatement checkStmt = con.prepareStatement(checkSql)) {
 
-            // Check for duplicate Student_ID
+            // ✅ Check for duplicate Student_ID
             checkStmt.setString(1, studentId);
             try (ResultSet rs = checkStmt.executeQuery()) {
                 if (rs.next() && rs.getInt(1) > 0) {
@@ -60,8 +62,16 @@ public class SignupServlet extends HttpServlet {
                     return;
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            out.println("<h1>❌ Database Error: " + e.getMessage() + "</h1>");
+            return;
+        }
 
-            // Insert new student record
+        // ✅ Insert new student record
+        try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement insertStmt = con.prepareStatement(insertSql)) {
+
             insertStmt.setString(1, studentId);
             insertStmt.setString(2, name);
             insertStmt.setString(3, icNum);
@@ -87,8 +97,9 @@ public class SignupServlet extends HttpServlet {
 
         } catch (SQLException e) {
             e.printStackTrace();
-            out.println("<h1>❌ Error: " + e.getMessage() + "</h1>");
+            out.println("<h1>❌ Database Error: " + e.getMessage() + "</h1>");
         }
+
         out.close();
     }
 }

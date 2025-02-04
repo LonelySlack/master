@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" import="java.sql.*"%>
+    pageEncoding="UTF-8" import="java.sql.*, jakarta.servlet.http.*, jakarta.servlet.*"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -88,6 +88,7 @@
     </style>
 </head>
 <body>
+
     <%-- ✅ Validate Session --%>
     <%
         if (session == null || session.getAttribute("Student_ID") == null) {
@@ -119,6 +120,59 @@
         <p>What would you like to do today?</p>
     </div>
 
+    <!-- ✅ Slideshow Container for Upcoming Events -->
+    <div class="slideshow-container">
+        <%
+            String DB_URL = "jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC";
+            String DB_USER = "u9946_Kmmw1Vvrcg";
+            String DB_PASSWORD = "V6y2rsxfO0B636FUWqU^Ia=F";
+            Connection con = null;
+            PreparedStatement pst = null;
+            ResultSet rs = null;
+            boolean hasEvents = false;
+
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+                con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+
+                String query = "SELECT Event_ID, Event_Name, Event_Desc, Event_Date FROM event WHERE Event_Status = 'Scheduled' ORDER BY Event_Date ASC LIMIT 3";
+                pst = con.prepareStatement(query);
+                rs = pst.executeQuery();
+
+                while (rs.next()) {
+                    hasEvents = true;
+                    int eventId = rs.getInt("Event_ID");
+                    String eventName = rs.getString("Event_Name");
+                    String eventDesc = rs.getString("Event_Desc");
+                    java.sql.Date eventDate = rs.getDate("Event_Date");
+        %>
+        <div class="card">
+            <h3><%= eventName %></h3>
+            <p><%= eventDesc.length() > 100 ? eventDesc.substring(0, 100) + "..." : eventDesc %></p>
+            <p><strong>Date:</strong> <%= eventDate %></p>
+            <a href="vieweventdetails.jsp?Event_ID=<%= eventId %>">View Details</a>
+        </div>
+        <%
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (rs != null) rs.close();
+                if (pst != null) pst.close();
+                if (con != null) con.close();
+            }
+
+            if (!hasEvents) {
+        %>
+        <div class="card">
+            <h3>No Upcoming Events</h3>
+            <p>Stay tuned for future updates!</p>
+        </div>
+        <%
+            }
+        %>
+    </div>
+
     <div class="cards">
         <div class="card">
             <h3>View Clubs</h3>
@@ -141,5 +195,6 @@
             <a href="Profile.jsp">Go to Profile</a>
         </div>
     </div>
+
 </body>
 </html>
