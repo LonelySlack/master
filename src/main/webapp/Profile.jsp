@@ -10,7 +10,6 @@
     <link rel="icon" type="image/x-icon"
         href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
     <style>
-        /* ✅ Fixed class names to avoid conflicts */
         body {
             font-family: Arial, sans-serif;
             background: linear-gradient(to right, #4facfe, #00f2fe);
@@ -93,10 +92,10 @@
 </head>
 <body>
 
-    <%-- ✅ Load navbar properly --%>
+    <%-- Load navbar properly --%>
     <script id="replace_with_navbar" src="nav.js"></script>
 
-    <%-- ✅ Retrieve session details --%>
+    <%-- Retrieve session details --%>
     <%
         String studentId = (String) session.getAttribute("Student_ID");
 
@@ -106,8 +105,9 @@
         String contactNumber = "Not Available";
         String faculty = "Not Available";
         String program = "Not Available";
+        String clubNames = "No club joined";
 
-        // ✅ Use correct MySQL JDBC driver
+        // Use correct MySQL JDBC driver
         String DB_URL = "jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC";
         String DB_USER = "u9946_Kmmw1Vvrcg";
         String DB_PASSWORD = "V6y2rsxfO0B636FUWqU^Ia=F";
@@ -116,7 +116,7 @@
             Class.forName("com.mysql.jdbc.Driver");
             Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
 
-            // ✅ Fetch user profile details from the database
+            // Fetch user profile details from the database
             String sql = "SELECT Name, Email, Contact_Num, Faculty, Program FROM student WHERE Student_ID = ?";
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, studentId);
@@ -130,7 +130,26 @@
                 program = rs.getString("Program");
             }
 
-            // ✅ Close resources to prevent memory leaks
+            // Fetch clubs the student has joined
+            String clubsQuery = "SELECT c.Club_Name FROM club_member cm " +
+                                "JOIN club c ON cm.Club_ID = c.Club_ID " +
+                                "WHERE cm.Student_ID = ? AND cm.Member_Status = 'Active'";
+            pst = con.prepareStatement(clubsQuery);
+            pst.setString(1, studentId);
+            rs = pst.executeQuery();
+
+            StringBuilder clubs = new StringBuilder();
+            while (rs.next()) {
+                if (clubs.length() > 0) {
+                    clubs.append(", ");
+                }
+                clubs.append(rs.getString("Club_Name"));
+            }
+            if (clubs.length() > 0) {
+                clubNames = clubs.toString();
+            }
+
+            // Close resources
             rs.close();
             pst.close();
             con.close();
@@ -139,28 +158,6 @@
         }
     %>
     
-    <%-- ✅ Prevent Caching --%>
-<%
-    // Set HTTP headers to prevent caching
-    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
-    response.setHeader("Pragma", "no-cache"); // HTTP 1.0
-    response.setHeader("Expires", "0"); // Proxies
-
-    // Validate Session
-    if (session == null || session.getAttribute("Student_ID") == null) {
-        response.sendRedirect("Login.jsp"); // Redirect if session is invalid
-        return;
-    }
-
-    // Retrieve session attributes
-    String studentName = (String) session.getAttribute("Name");
-
-    // Ensure name is not null
-    if (studentName == null) {
-        studentName = "Guest";
-    }
-%>
-
     <div class="profile-container">
         <h1 class="profile-h1">Profile</h1>
         <div class="profile-details">
@@ -170,6 +167,7 @@
             <p><strong>Contact Number:</strong> <%= contactNumber %></p>
             <p><strong>Faculty:</strong> <%= faculty %></p>
             <p><strong>Program:</strong> <%= program %></p>
+            <p><strong>Clubs Joined:</strong> <%= clubNames %></p>
         </div>
 
         <div class="profile-button-container">
