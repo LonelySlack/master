@@ -33,10 +33,12 @@ public class LoginController extends HttpServlet {
         String studentId = request.getParameter("Student_ID");
         String password = request.getParameter("Password");
 
-        String sql = "SELECT s.Name, cm.Role_ID " +
+        String sql = "SELECT s.Name, cm.Role_ID, r.Role_Name, c.Club_ID " +
                      "FROM student s " +
                      "LEFT JOIN club_member cm ON s.Student_ID = cm.Student_ID " +
-                     "WHERE s.Student_ID = ? AND s.Password = ? AND (cm.Member_Status = 'Active' OR cm.Member_Status IS NULL)";
+                     "LEFT JOIN role r ON cm.Role_ID = r.Role_ID " +
+                     "LEFT JOIN club c ON c.President_ID = s.Student_ID " +
+                     "WHERE s.Student_ID = ? AND s.Password = ?";
 
         try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement pst = con.prepareStatement(sql)) {
@@ -48,17 +50,20 @@ public class LoginController extends HttpServlet {
                 if (rs.next()) {
                     String name = rs.getString("Name");
                     int roleId = rs.getInt("Role_ID");
+                    String roleName = rs.getString("Role_Name");
+                    Integer clubId = rs.getInt("Club_ID");
 
                     HttpSession session = request.getSession();
                     session.setAttribute("Student_ID", studentId);
                     session.setAttribute("Name", name);
                     session.setAttribute("Role_ID", roleId);
+                    session.setAttribute("Role_Name", roleName != null ? roleName : "Student");
 
-                    // Redirect based on Role_ID
-                    if (roleId == 1) {
-                        response.sendRedirect("welcomePresident.jsp"); // Admin
+                    if (roleId == 1 && clubId != null) { // Role_ID = 1 indicates President
+                        session.setAttribute("Club_ID", clubId); // Store the Club_ID in session
+                        response.sendRedirect("welcomePresident.jsp");
                     } else {
-                        response.sendRedirect("welcome.jsp"); // Other roles or no role
+                        response.sendRedirect("welcome.jsp");
                     }
                 } else {
                     showAlert(response, "Invalid Student ID or Password! Please try again.", "Login.jsp");
