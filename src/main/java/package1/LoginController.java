@@ -1,73 +1,78 @@
 package package1;
 
 import java.io.IOException;
-
-
-
 import java.io.PrintWriter;
 import java.sql.*;
-import jakarta.servlet.*;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet(name = "LoginController", urlPatterns = {"/LoginController"})
 public class LoginController extends HttpServlet {
     private static final long serialVersionUID = 1L;
-
-    // Use the provided database credentials
+    
     private static final String DB_URL = "jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC";
     private static final String DB_USER = "u9946_Kmmw1Vvrcg";
     private static final String DB_PASSWORD = "V6y2rsxfO0B636FUWqU^Ia=F";
 
     static {
         try {
-            // Register the MySQL JDBC Driver
-            Class.forName("com.mysql.jdbc.Driver");  // Correct MySQL driver
+            Class.forName("com.mysql.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            throw new RuntimeException("MySQL JDBC Driver not found.");
+            throw new RuntimeException("MySQL JDBC Driver not found.", e);
         }
     }
 
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        PrintWriter out = response.getWriter();
-
-        // Retrieve form data
+        
         String studentId = request.getParameter("Student_ID");
         String password = request.getParameter("Password");
+        String role = request.getParameter("Role");
 
-        // SQL query to check if credentials are valid
-        String sql = "SELECT Name FROM student WHERE Student_ID = ? AND Password = ?";
+        String sql = "SELECT s.Name, cm.Role_ID, r.Role_Name FROM student s " +
+                     "LEFT JOIN club_member cm ON s.Student_ID = cm.Student_ID " +
+                     "LEFT JOIN role r ON cm.Role_ID = r.Role_ID " +
+                     "WHERE s.Student_ID = ? AND s.Password = ? AND (r.Role_Name = ? OR r.Role_Name IS NULL) AND (cm.Member_Status = 'Active' OR cm.Member_Status IS NULL)";
 
         try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-             PreparedStatement pst = con.prepareStatement(sql)) 
-        {
+             PreparedStatement pst = con.prepareStatement(sql)) {
 
-   //test         // Set query parameters
             pst.setString(1, studentId);
             pst.setString(2, password);
+            pst.setString(3, role);
 
             try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {
-                    // Create session and store user information
+                    String name = rs.getString("Name");
+                    String roleName = rs.getString("Role_Name");
+                    
                     HttpSession session = request.getSession();
                     session.setAttribute("Student_ID", studentId);
-                    session.setAttribute("Name", rs.getString("Name"));
+                    session.setAttribute("Name", name);
+                    session.setAttribute("Role", roleName != null ? roleName : "Student");
 
-                    // Redirect to welcome page
-                    response.sendRedirect("welcome.jsp");
+                    response.sendRedirect("President".equals(roleName) ? "welcomePresident.jsp" : "welcome.jsp");
                 } else {
-                    out.println("<script type='text/javascript'>");
-                    out.println("alert('❌ Invalid Student ID or Password! Please try again.');");
-                    out.println("window.location.href = 'Login.jsp';");
-                    out.println("</script>");
+                    showAlert(response, "Invalid Student ID, Password, or Role! Please try again.", "Login.jsp");
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            out.println("<h3>❌ Database Connection Error!</h3>");
+            showAlert(response, "Database Connection Error! Please contact the administrator.", "Login.jsp");
         }
+    }
+
+    private void showAlert(HttpServletResponse response, String message, String redirectPage) throws IOException {
+        PrintWriter out = response.getWriter();
+        out.println("<script type='text/javascript'>");
+        out.println("alert('" + message + "');");
+        out.println("window.location.href = '" + redirectPage + "';");
+        out.println("</script>");
         out.close();
     }
 }

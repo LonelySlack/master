@@ -1,13 +1,12 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8" import="java.sql.*, jakarta.servlet.http.*, jakarta.servlet.*"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.sql.Connection, java.sql.PreparedStatement, java.sql.ResultSet, java.sql.DriverManager, java.sql.SQLException" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome Dashboard</title>
-    <link rel="icon" type="image/x-icon"
-        href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
+    <link rel="icon" type="image/x-icon" href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
     <style>
         body {
             margin: 0;
@@ -72,37 +71,38 @@
 </head>
 <body>
     <script id="replace_with_navbar" src="nav.js"></script>
-    
+
     <%-- ✅ Prevent Caching --%>
-<%
-    // Set HTTP headers to prevent caching
-    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
-    response.setHeader("Pragma", "no-cache"); // HTTP 1.0
-    response.setHeader("Expires", "0"); // Proxies
+    <%
+        // Prevent browser caching
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
 
-    // Validate Session
-    if (session == null || session.getAttribute("Student_ID") == null) {
-        response.sendRedirect("Login.jsp"); // Redirect if session is invalid
-        return;
-    }
+        // Validate session
+        if (session == null || session.getAttribute("Student_ID") == null) {
+            response.sendRedirect("Login.jsp");
+            return;
+        }
 
-    // Retrieve session attributes
-    String studentId = (String) session.getAttribute("Student_ID");
-    String studentName = (String) session.getAttribute("Name");
+        // Retrieve session attributes
+        String studentId = (String) session.getAttribute("Student_ID");
+        String studentName = (String) session.getAttribute("Name");
 
-    // Ensure name is not null
-    if (studentName == null) {
-        studentName = "Guest";
-    }
-%>
+        // Handle null student name
+        if (studentName == null) {
+            studentName = "Guest";
+        }
+    %>
     <div class="welcome">
         <h1>Welcome, <%= studentName %>!</h1>
         <p>What would you like to do today?</p>
     </div>
 
-    <!-- ✅ Slideshow Container for Upcoming Events -->
+    <!-- ✅ Display Upcoming Events -->
     <div class="slideshow-container">
         <%
+            // Database configuration
             String DB_URL = "jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC";
             String DB_USER = "u9946_Kmmw1Vvrcg";
             String DB_PASSWORD = "V6y2rsxfO0B636FUWqU^Ia=F";
@@ -112,14 +112,17 @@
             boolean hasEvents = false;
 
             try {
-                // Use the correct MySQL driver
-                Class.forName("com.mysql.cj.jdbc.Driver");
+                // Database connection
+                Class.forName("com.mysql.jdbc.Driver");
                 con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+
+                // Query for upcoming events
                 String query = "SELECT Event_ID, Event_Name, Event_Desc, Event_Date FROM event WHERE Event_Status = ? ORDER BY Event_Date ASC LIMIT 3";
                 pst = con.prepareStatement(query);
-                pst.setString(1, "Scheduled"); // Prevent SQL Injection
+                pst.setString(1, "Scheduled");
                 rs = pst.executeQuery();
 
+                // Display each event
                 while (rs.next()) {
                     hasEvents = true;
                     int eventId = rs.getInt("Event_ID");
@@ -136,10 +139,8 @@
         <%
                 }
             } catch (Exception e) {
-                // Log the error instead of printing stack trace
                 System.err.println("Database Error: " + e.getMessage());
             } finally {
-                // Properly close resources
                 try { if (rs != null) rs.close(); } catch (SQLException e) { /* Ignored */ }
                 try { if (pst != null) pst.close(); } catch (SQLException e) { /* Ignored */ }
                 try { if (con != null) con.close(); } catch (SQLException e) { /* Ignored */ }
@@ -156,6 +157,7 @@
         %>
     </div>
 
+    <!-- ✅ Actionable Cards -->
     <div class="cards">
         <div class="card">
             <h3>View Clubs</h3>
@@ -176,6 +178,11 @@
             <h3>My Profile</h3>
             <p>View and update your profile information.</p>
             <a href="Profile.jsp">Go to Profile</a>
+        </div>
+        <div class="card">
+            <h3>Apply to be Club President</h3>
+            <p>Lead a club and organize amazing activities.</p>
+            <a href="ApplyClubPresident.jsp">Apply Now</a>
         </div>
     </div>
 </body>
