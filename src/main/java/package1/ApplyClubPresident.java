@@ -68,9 +68,9 @@ public class ApplyClubPresident extends HttpServlet {
             if (rs != null) rs.close();
             if (pst != null) pst.close();
 
-            // Insert new application with Reason and NULL Admin_ID
+            // Insert new application with Reason and Admin_ID set to 1
             String sql = "INSERT INTO president_application (Application_Date, Approval_Status, Student_ID, Admin_ID, Reason) " +
-                         "VALUES (CURRENT_DATE, 'Pending', ?, NULL, ?)";
+                         "VALUES (CURRENT_DATE, 'Pending', ?, 1, ?)";
             pst = con.prepareStatement(sql);
             pst.setString(1, studentId);
             pst.setString(2, reason);
