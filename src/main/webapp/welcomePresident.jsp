@@ -5,8 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Club President Dashboard</title>
-        <link rel="icon" type="image/x-icon" href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
-    
+    <link rel="icon" type="image/x-icon" href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -100,7 +99,7 @@
 <body>
 <script id="replace_with_presidentnavbar" src="presidentnavbar.js"></script>
     <div class="container">
-        <h1>Welcome, <%= session.getAttribute("Student_Name") %>!</h1>
+        <h1>Welcome, <%= session.getAttribute("Name") %>!</h1>
         <p class="center-text">Here is the list of members and pending applications for your club.</p>
 
         <table>
@@ -113,29 +112,30 @@
                 <th>Actions</th>
             </tr>
             <%
+                Connection con = null;
+                PreparedStatement pst = null;
+                ResultSet rs = null;
+
                 try {
-                    // Ensure Club_ID exists in the session
                     Integer clubId = (Integer) session.getAttribute("Club_ID");
                     if (clubId == null) {
             %>
                 <tr>
-                    <td colspan="6" class="center-text">Error: Club_ID is missing from the session.</td>
+                    <td colspan="6" class="center-text">Error: Club_ID is missing. Please contact support.</td>
                 </tr>
             <%
-                        return; // Exit the page if Club_ID is not found
+                        return;
                     }
 
                     Class.forName("com.mysql.jdbc.Driver");
-                    Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/clubmanagementsystem", "root", "root");
+                    con = DriverManager.getConnection("jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC", "u9946_Kmmw1Vvrcg", "V6y2rsxfO0B636FUWqU^Ia=F");
 
-                    // Query to fetch club members for the logged-in president's club
                     String query = "SELECT * FROM club_member WHERE Club_ID = ?";
-                    PreparedStatement pst = con.prepareStatement(query);
+                    pst = con.prepareStatement(query);
                     pst.setInt(1, clubId);
+                    rs = pst.executeQuery();
 
-                    ResultSet rs = pst.executeQuery();
-
-                    boolean hasResults = false; // To track empty results
+                    boolean hasResults = false;
 
                     while (rs.next()) {
                         hasResults = true;
@@ -166,6 +166,7 @@
             </tr>
             <%
                     }
+
                     if (!hasResults) {
             %>
                 <tr>
@@ -173,9 +174,6 @@
                 </tr>
             <%
                     }
-                    rs.close();
-                    pst.close();
-                    con.close();
                 } catch (Exception e) {
                     e.printStackTrace();
             %>
@@ -183,6 +181,10 @@
                 <td colspan="6" class="center-text">Error loading club members. Please try again later.</td>
             </tr>
             <%
+                } finally {
+                    if (rs != null) rs.close();
+                    if (pst != null) pst.close();
+                    if (con != null) con.close();
                 }
             %>
         </table>

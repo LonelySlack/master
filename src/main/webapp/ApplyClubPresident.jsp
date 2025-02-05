@@ -21,14 +21,13 @@
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 30px;
+            text-align: center;
         }
         .wrapper h1 {
             color: #00f2fe;
-            text-align: center;
             margin-bottom: 20px;
         }
         .status {
-            text-align: center;
             margin-bottom: 20px;
             padding: 10px;
             background: #f9f9f9;
@@ -40,6 +39,7 @@
         }
         .form-field {
             margin-bottom: 15px;
+            text-align: center;
         }
         .form-field label {
             display: block;
@@ -55,7 +55,7 @@
             height: 100px;
             font-size: 14px;
         }
-        .form-field button {
+        .form-field button, .create-club-btn {
             width: 100%;
             padding: 10px;
             background: #00f2fe;
@@ -65,13 +65,20 @@
             font-size: 16px;
             cursor: pointer;
             transition: background 0.3s ease;
+            margin-top: 10px;
         }
-        .form-field button:hover {
+        .form-field button:hover, .create-club-btn:hover {
             background: #4facfe;
         }
         .form-field button:disabled {
             background: #ccc;
             cursor: not-allowed;
+        }
+        .create-club-btn {
+            background-color: #4caf50;
+        }
+        .create-club-btn:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -118,13 +125,13 @@
             <h3>Your Application Status: <%= applicationStatus %></h3>
             <p>
                 <% if ("Approved".equals(applicationStatus)) { %>
-                    Congratulations! Your application has been approved.
+                    ✅ Congratulations! Your application has been approved. You can now create a club.
                 <% } else if ("Pending".equals(applicationStatus)) { %>
-                    Your application is under review.
+                    ⏳ Your application is under review.
                 <% } else if ("Rejected".equals(applicationStatus)) { %>
-                    Unfortunately, your application was rejected.
+                    ❌ Unfortunately, your application was rejected.
                 <% } else { %>
-                    You have not applied to be a club president yet.
+                    ℹ️ You have not applied to be a club president yet.
                 <% } %>
             </p>
         </div>
@@ -140,6 +147,10 @@
                 <button type="submit">Submit Application</button>
             </div>
         </form>
+        <% } else if ("Approved".equals(applicationStatus)) { %>
+        <div class="form-field">
+            <a href="CreateClub.jsp" class="create-club-btn">Create Club</a>
+        </div>
         <% } else { %>
         <div class="form-field">
             <button type="button" disabled>You have already applied.</button>
