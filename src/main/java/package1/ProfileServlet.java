@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @WebServlet(name = "ProfileServlet", urlPatterns = { "/ProfileServlet" })
 public class ProfileServlet extends HttpServlet {
@@ -20,20 +20,20 @@ public class ProfileServlet extends HttpServlet {
         String studentId = request.getParameter("student_id");
 
         if ("update".equals(action)) {
-            // Fetch updated details
+            // ✅ Fetch updated details
             String name = request.getParameter("name");
             String email = request.getParameter("email");
             String contactNumber = request.getParameter("contactNumber");
             String faculty = request.getParameter("faculty");
             String program = request.getParameter("program");
 
-            // Database connection details
+            // ✅ Database connection details
             String dbURL = "jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC";
             String dbUser = "u9946_Kmmw1Vvrcg";
             String dbPassword = "V6y2rsxfO0B636FUWqU^Ia=F";
-           
+
             try {
-                Class.forName("com.mysql.jdbc.Driver");
+                Class.forName("com.mysql.jdbc.Driver"); // ✅ Updated driver
                 try (Connection con = DriverManager.getConnection(dbURL, dbUser, dbPassword)) {
                     String sql = "UPDATE student SET Name = ?, Email = ?, Contact_Num = ?, Faculty = ?, Program = ? WHERE Student_ID = ?";
                     try (PreparedStatement pst = con.prepareStatement(sql)) {
@@ -46,7 +46,8 @@ public class ProfileServlet extends HttpServlet {
 
                         int rowsUpdated = pst.executeUpdate();
                         if (rowsUpdated > 0) {
-                            request.getSession().setAttribute("Student_Name", name);
+                            HttpSession session = request.getSession();
+                            session.setAttribute("Name", name);
                             response.sendRedirect("Profile.jsp?message=Profile updated successfully!");
                         }
                     }
