@@ -116,7 +116,7 @@
         <div class="card">
             <h3>Club Details</h3>
             <p>View detailed information about each club.</p>
-            <a href="club_details.html">View Details</a>
+            <a href="Admin_clubdetails.jsp">View Details</a>
         </div>
         <div class="card">
             <h3>Club Members</h3>
