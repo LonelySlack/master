@@ -39,6 +39,7 @@
                 <input type="password" name="Admin_Password" placeholder="Enter Password" required>
             </div>
             <button type="submit" class="btn">Login</button>
+                   <p style=text-align:center><a href="Login.jsp">Student Login </a></p>
         </form>
     </div>
 </body>
