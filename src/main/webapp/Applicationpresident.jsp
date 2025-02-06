@@ -93,9 +93,7 @@
 </head>
 <body>
 <script id="replace_with_adminnavbar" src="adminnavbar.js"></script>
-    <h1>Welcome, Admin!</h1>
-
-    <%-- Display success or error message if redirected from UpdateApprovalServlet --%>
+        <%-- Display success or error message if redirected from UpdateApprovalServlet --%>
     <% 
         String message = request.getParameter("message");
         String status = request.getParameter("status");

@@ -128,7 +128,11 @@
             <p>Assign or change the president of a club.</p>
             <a href="assign_president.html">Assign President</a>
         </div>
-
+ 		<div class="card">
+            <h3>View Club President Application </h3>
+            <p>Details the president Application.</p>
+            <a href="Applicationpresident.jsp">View Application </a>
+        </div>
         <!-- Event Management -->
         <div class="card">
             <h3>Create Event</h3>
