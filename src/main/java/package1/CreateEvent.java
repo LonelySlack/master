@@ -65,7 +65,7 @@ public class CreateEvent extends HttpServlet {
 
                 int rowsInserted = pst.executeUpdate();
                 if (rowsInserted > 0) {
-                    response.getWriter().println("<script>alert('Event created successfully!');window.location.href='welcomePresident.jsp';</script>");
+                    response.getWriter().println("<script>alert('Event created successfully!');window.location.href='President_home.jsp';</script>");
                 } else {
                     response.getWriter().println("<script>alert('Failed to create the event. Please try again later.');window.location.href='CreateEvent.jsp';</script>");
                 }

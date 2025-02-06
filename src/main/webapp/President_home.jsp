@@ -70,7 +70,7 @@
     </style>
 </head>
 <body>
-    <script id="replace_with_navbar" src="nav.js"></script>
+<script id="replace_with_presidentnavbar" src="presidentnavbar.js"></script>
     <%-- ✅ Prevent Caching --%>
     <%
         // Prevent browser caching
@@ -143,22 +143,22 @@
         <div class="card">
             <h3>View Club Details</h3>
             <p>View detailed information about your club.</p>
-            <a href="view_club.jsp?Club_ID=<%= clubId %>">View Club</a>
+            <a href="President_viewclubdetails.jsp?Club_ID=<%= clubId %>">View Club</a>
         </div>
         <div class="card">
             <h3>View Club Members</h3>
             <p>Manage and view members of your club.</p>
-            <a href="view_members.jsp?Club_ID=<%= clubId %>">View Members</a>
+            <a href="President_clubmember.jsp?Club_ID=<%= clubId %>">View Members</a>
         </div>
         <div class="card">
             <h3>Create Event</h3>
             <p>Create a new event for your club.</p>
-            <a href="create_event.jsp?Club_ID=<%= clubId %>">Create Event</a>
+            <a href="CreateEvent.jsp?Club_ID=<%= clubId %>">Create Event</a>
         </div>
         <div class="card">
             <h3>View Events</h3>
             <p>View all events organized by your club.</p>
-            <a href="view_events.jsp?Club_ID=<%= clubId %>">View Events</a>
+            <a href="President_clubevent.jsp?Club_ID=<%= clubId %>">View Events</a>
         </div>
     </div>
 </body>
