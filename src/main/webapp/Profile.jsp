@@ -91,14 +91,61 @@
     </style>
 </head>
 <body>
+    <%-- Retrieve Role_ID from clubmember table --%>
+    <%
+        String studentId = (String) session.getAttribute("Student_ID");
+        String roleIdNumeric = "2"; // Default role (member)
+        String roleName = "member"; // Default role name
+
+        String DB_URL = "jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC";
+        String DB_USER = "u9946_Kmmw1Vvrcg";
+        String DB_PASSWORD = "V6y2rsxfO0B636FUWqU^Ia=F";
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+
+            // Fetch Role_ID from clubmember table
+            String roleQuery = "SELECT Role_ID FROM club_member WHERE Student_ID = ?";
+            PreparedStatement pst = con.prepareStatement(roleQuery);
+            pst.setString(1, studentId);
+            ResultSet rs = pst.executeQuery();
+
+            if (rs.next()) {
+                roleIdNumeric = rs.getString("Role_ID"); // Get numeric Role_ID
+                // Map numeric Role_ID to role name
+                if ("1".equals(roleIdNumeric)) {
+                    roleName = "president";
+                } else if ("2".equals(roleIdNumeric)) {
+                    roleName = "member";
+                }
+            }
+
+            rs.close();
+            pst.close();
+            con.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    %>
 
     <%-- Load navbar properly --%>
+    <%
+        if ("president".equals(roleName)) {
+            // President role: Load admin navbar
+    %>
+    <script id="replace_with_presidentnavbar" src="presidentnavbar.js"></script>
+    <%
+        } else {
+            // Member role: Load standard navbar
+    %>
     <script id="replace_with_navbar" src="nav.js"></script>
+    <%
+        }
+    %>
 
     <%-- Retrieve session details --%>
     <%
-        String studentId = (String) session.getAttribute("Student_ID");
-
         // Initialize user details
         String name = "Not Available";
         String email = "Not Available";
@@ -106,11 +153,6 @@
         String faculty = "Not Available";
         String program = "Not Available";
         String clubNames = "No club joined";
-
-        // Use correct MySQL JDBC driver
-        String DB_URL = "jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC";
-        String DB_USER = "u9946_Kmmw1Vvrcg";
-        String DB_PASSWORD = "V6y2rsxfO0B636FUWqU^Ia=F";
 
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -121,7 +163,6 @@
             PreparedStatement pst = con.prepareStatement(sql);
             pst.setString(1, studentId);
             ResultSet rs = pst.executeQuery();
-
             if (rs.next()) {
                 name = rs.getString("Name");
                 email = rs.getString("Email");
@@ -137,7 +178,6 @@
             pst = con.prepareStatement(clubsQuery);
             pst.setString(1, studentId);
             rs = pst.executeQuery();
-
             StringBuilder clubs = new StringBuilder();
             while (rs.next()) {
                 if (clubs.length() > 0) {
@@ -149,7 +189,6 @@
                 clubNames = clubs.toString();
             }
 
-            // Close resources
             rs.close();
             pst.close();
             con.close();
@@ -169,7 +208,6 @@
             <p><strong>Program:</strong> <%= program %></p>
             <p><strong>Clubs Joined:</strong> <%= clubNames %></p>
         </div>
-
         <div class="profile-button-container">
             <form action="UpdateProfile.jsp" method="get">
                 <button type="submit">Update Profile</button>
@@ -180,6 +218,5 @@
             </form>
         </div>
     </div>
-
 </body>
 </html>
