@@ -68,8 +68,7 @@
             font-size: 18px;
             margin-top: 20px;
         }
-        
-            .back-button {
+        .back-button {
             display: block;
             width: 100px;
             margin: 20px auto;
@@ -89,7 +88,6 @@
 <body>
     <script id="replace_with_adminnavbar" src="adminnavbar.js"></script>
     <h1>Approve Events</h1>
-
     <div class="event-container">
         <table>
             <tr>
@@ -98,11 +96,10 @@
                 <th>Event Date</th>
                 <th>Description</th>
                 <th>Location</th>
-                <th>Club ID</th>
+                <th>Club Name</th>
                 <th>Status</th>
                 <th>Actions</th>
             </tr>
-
             <%
                 // ✅ Secure session handling
                 String adminId = (String) session.getAttribute("Admin_ID");
@@ -110,11 +107,9 @@
                     response.sendRedirect("AdminLogin.jsp");
                     return;
                 }
-
                 Connection con = null;
                 PreparedStatement pst = null;
                 ResultSet rs = null;
-
                 try {
                     // ✅ Use latest MySQL JDBC driver
                     Class.forName("com.mysql.jdbc.Driver");
@@ -123,12 +118,13 @@
                         "u9946_Kmmw1Vvrcg",
                         "V6y2rsxfO0B636FUWqU^Ia=F"
                     );
-
-                    // ✅ Fetch all pending events
-                    String query = "SELECT * FROM event WHERE Event_Status = 'Pending' " ;
+                    // ✅ Fetch all pending events with club names
+                    String query = "SELECT e.Event_ID, e.Event_Name, e.Event_Date, e.Event_Desc, e.Event_Location, c.Club_Name, e.Event_Status " +
+                                   "FROM event e " +
+                                   "JOIN club c ON e.Club_ID = c.Club_ID " +
+                                   "WHERE e.Event_Status = 'Pending'";
                     pst = con.prepareStatement(query);
                     rs = pst.executeQuery();
-
                     boolean hasEvents = false;
                     while (rs.next()) {
                         hasEvents = true;
@@ -139,7 +135,7 @@
                 <td><%= rs.getDate("Event_Date") %></td>
                 <td><%= rs.getString("Event_Desc") %></td>
                 <td><%= rs.getString("Event_Location") %></td>
-                <td><%= rs.getString("Club_ID") %></td>
+                <td><%= rs.getString("Club_Name") %></td>
                 <td><%= rs.getString("Event_Status") %></td>
                 <td>
                     <!-- ✅ Approve Event -->
@@ -148,7 +144,6 @@
                         <input type="hidden" name="Approval_Status" value="Approved">
                         <button type="submit" class="approve-btn">Approve</button>
                     </form>
-
                     <!-- ❌ Reject Event -->
                     <form action="Admin_UpdateEventServlet" method="post" style="display:inline;">
                         <input type="hidden" name="Event_ID" value="<%= rs.getInt("Event_ID") %>">
@@ -159,7 +154,6 @@
             </tr>
             <%
                     }
-
                     // ✅ No pending events
                     if (!hasEvents) {
             %>
@@ -168,7 +162,6 @@
             </tr>
             <%
                     }
-
                 } catch (Exception e) {
                     e.printStackTrace();
             %>
