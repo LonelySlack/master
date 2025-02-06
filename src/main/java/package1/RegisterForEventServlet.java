@@ -13,12 +13,14 @@ import jakarta.servlet.http.HttpSession;
 public class RegisterForEventServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
+    // Database connection details
     private static final String DB_URL = "jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC";
     private static final String DB_USER = "u9946_Kmmw1Vvrcg";
     private static final String DB_PASSWORD = "V6y2rsxfO0B636FUWqU^Ia=F";
 
     static {
         try {
+            // Load MySQL JDBC driver
             Class.forName("com.mysql.jdbc.Driver");
         } catch (ClassNotFoundException e) {
             throw new RuntimeException("MySQL JDBC Driver not found.", e);
@@ -29,7 +31,7 @@ public class RegisterForEventServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
 
-        // Retrieve the session
+        // Secure session handling
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("Student_ID") == null) {
             response.sendRedirect("Login.jsp");
@@ -37,46 +39,94 @@ public class RegisterForEventServlet extends HttpServlet {
         }
 
         String studentId = (String) session.getAttribute("Student_ID");
-        String eventIdParam = request.getParameter("Event_ID");
+        String eventIdStr = request.getParameter("Event_ID");
 
-        if (eventIdParam == null || eventIdParam.isEmpty()) {
+        // Validate inputs
+        if (eventIdStr == null || eventIdStr.trim().isEmpty()) {
             response.getWriter().println("<script>alert('Invalid event ID.');window.location.href='Event.jsp';</script>");
             return;
         }
 
-        int eventId = Integer.parseInt(eventIdParam);
+        int eventId;
+        try {
+            eventId = Integer.parseInt(eventIdStr.trim());
+        } catch (NumberFormatException e) {
+            response.getWriter().println("<script>alert('Invalid event ID format.');window.location.href='Event.jsp';</script>");
+            return;
+        }
 
-        try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            // Check if the student is already registered for this event
-            String checkQuery = "SELECT * FROM student_event WHERE Student_ID = ? AND Event_ID = ?";
-            try (PreparedStatement checkStmt = con.prepareStatement(checkQuery)) {
-                checkStmt.setString(1, studentId);
-                checkStmt.setInt(2, eventId);
+        Connection con = null;
+        PreparedStatement pst = null;
+        ResultSet rs = null;
 
-                try (ResultSet rs = checkStmt.executeQuery()) {
-                    if (rs.next()) {
-                        response.getWriter().println("<script>alert('You are already registered for this event.');window.location.href='Event.jsp';</script>");
-                        return;
-                    }
-                }
+        try {
+            con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+
+            // Check if the student is already registered
+            String checkRegistrationQuery = "SELECT * FROM student_event WHERE Student_ID = ? AND Event_ID = ?";
+            pst = con.prepareStatement(checkRegistrationQuery);
+            pst.setString(1, studentId);
+            pst.setInt(2, eventId);
+            rs = pst.executeQuery();
+
+            if (rs.next()) {
+                response.getWriter().println("<script>alert('You have already joined this event.');window.location.href='vieweventdetails.jsp?Event_ID=" + eventId + "';</script>");
+                return;
             }
 
-            // Register the student for the event
-            String registerQuery = "INSERT INTO student_event (Student_ID, Event_ID, Join_Date, Status) VALUES (?, ?, CURDATE(), 'Registered')";
-            try (PreparedStatement registerStmt = con.prepareStatement(registerQuery)) {
-                registerStmt.setString(1, studentId);
-                registerStmt.setInt(2, eventId);
+            // Fetch current number of participants and max participants
+            String fetchEventDetailsQuery = "SELECT Number_Joining, Max_Participants FROM event WHERE Event_ID = ?";
+            pst = con.prepareStatement(fetchEventDetailsQuery);
+            pst.setInt(1, eventId);
+            rs = pst.executeQuery();
 
-                int rowsInserted = registerStmt.executeUpdate();
-                if (rowsInserted > 0) {
-                    response.getWriter().println("<script>alert('Successfully registered for the event!');window.location.href='Event.jsp';</script>");
-                } else {
-                    response.getWriter().println("<script>alert('Failed to register for the event. Please try again.');window.location.href='Event.jsp';</script>");
-                }
+            if (!rs.next()) {
+                response.getWriter().println("<script>alert('Event not found.');window.location.href='Event.jsp';</script>");
+                return;
             }
+
+            int numberJoining = rs.getInt("Number_Joining");
+            int maxParticipants = rs.getInt("Max_Participants");
+
+            if (numberJoining >= maxParticipants) {
+                response.getWriter().println("<script>alert('Registration is full. No more spots available.');window.location.href='vieweventdetails.jsp?Event_ID=" + eventId + "';</script>");
+                return;
+            }
+
+            // Increment the number of participants
+            String updateParticipantsQuery = "UPDATE event SET Number_Joining = Number_Joining + 1 WHERE Event_ID = ?";
+            pst = con.prepareStatement(updateParticipantsQuery);
+            pst.setInt(1, eventId);
+            pst.executeUpdate();
+
+            // Insert the student into the student_event table
+            String insertRegistrationQuery = "INSERT INTO student_event (Student_ID, Event_ID) VALUES (?, ?)";
+            pst = con.prepareStatement(insertRegistrationQuery);
+            pst.setString(1, studentId);
+            pst.setInt(2, eventId);
+            pst.executeUpdate();
+
+            // Check if the event is now full and close it
+            if (numberJoining + 1 <= maxParticipants) {
+                String closeEventQuery = "UPDATE event SET Event_Status = 'Closed' WHERE Event_ID = ?";
+                pst = con.prepareStatement(closeEventQuery);
+                pst.setInt(1, eventId);
+                pst.executeUpdate();
+            }
+
+            response.getWriter().println("<script>alert('You have successfully joined the event!');window.location.href='vieweventdetails.jsp?Event_ID=" + eventId + "';</script>");
+
         } catch (SQLException e) {
             e.printStackTrace();
-            response.getWriter().println("<script>alert('Database error occurred: " + e.getMessage() + "');window.location.href='Event.jsp';</script>");
+            response.getWriter().println("<script>alert('Database error: " + e.getMessage() + "');window.location.href='vieweventdetails.jsp';</script>");
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (pst != null) pst.close();
+                if (con != null) con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

@@ -22,7 +22,7 @@
         .welcome h1 {
             font-size: 36px;
         }
-        .cards {
+        .slideshow-container {
             display: flex;
             justify-content: center;
             gap: 20px;
@@ -60,7 +60,7 @@
         .card a:hover {
             background: #4facfe;
         }
-        .slideshow-container {
+        .cards {
             display: flex;
             justify-content: center;
             gap: 20px;
@@ -71,7 +71,6 @@
 </head>
 <body>
     <script id="replace_with_navbar" src="nav.js"></script>
-
     <%-- ✅ Prevent Caching --%>
     <%
         // Prevent browser caching
@@ -100,12 +99,14 @@
     </div>
 
     <!-- ✅ Display Upcoming Events -->
+    <h2 style="text-align: center; color: white;">Upcoming Events</h2>
     <div class="slideshow-container">
         <%
             // Database configuration
             String DB_URL = "jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC";
             String DB_USER = "u9946_Kmmw1Vvrcg";
             String DB_PASSWORD = "V6y2rsxfO0B636FUWqU^Ia=F";
+
             Connection con = null;
             PreparedStatement pst = null;
             ResultSet rs = null;
@@ -119,7 +120,7 @@
                 // Query for upcoming events
                 String query = "SELECT Event_ID, Event_Name, Event_Desc, Event_Date FROM event WHERE Event_Status = ? ORDER BY Event_Date ASC LIMIT 3";
                 pst = con.prepareStatement(query);
-                pst.setString(1, "Scheduled");
+                pst.setString(1, "Upcoming"); // Filter for upcoming events
                 rs = pst.executeQuery();
 
                 // Display each event

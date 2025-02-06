@@ -25,7 +25,6 @@
 <body>
     <script id="replace_with_navbar" src="nav.js"></script>
     <h1>Event Details</h1>
-
     <%
         // ✅ Secure session handling
         String studentId = (String) session.getAttribute("Student_ID");
@@ -33,25 +32,21 @@
             response.sendRedirect("Login.jsp");
             return;
         }
-
         // ✅ Get Event_ID from URL
         String eventIdParam = request.getParameter("Event_ID");
         if (eventIdParam == null || eventIdParam.isEmpty()) {
-            response.sendRedirect("ClubEvents.jsp");
+            response.sendRedirect("Event.jsp");
             return;
         }
         int eventId = Integer.parseInt(eventIdParam);
-
         // ✅ Database connection
         Connection con = null;
         PreparedStatement pst = null;
         ResultSet rs = null;
         boolean isAlreadyRegistered = false;
-
         try {
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC", "u9946_Kmmw1Vvrcg", "V6y2rsxfO0B636FUWqU^Ia=F");
-
             // ✅ Check if student is already registered
             String checkRegistrationQuery = "SELECT * FROM student_event WHERE Student_ID = ? AND Event_ID = ?";
             pst = con.prepareStatement(checkRegistrationQuery);
@@ -63,13 +58,11 @@
             }
             rs.close();
             pst.close();
-
             // ✅ Fetch event details
             String query = "SELECT Event_Name, Event_Date, Event_Desc, Event_Location, Event_Status, IFNULL(Number_Joining, 0) AS Number_Joining, IFNULL(Max_Participants, 100) AS Max_Participants FROM event WHERE Event_ID = ?";
             pst = con.prepareStatement(query);
             pst.setInt(1, eventId);
             rs = pst.executeQuery();
-
             if (rs.next()) {
                 String eventName = rs.getString("Event_Name");
                 String eventDate = rs.getDate("Event_Date").toString();
@@ -78,11 +71,9 @@
                 String eventStatus = rs.getString("Event_Status");
                 int numberJoining = rs.getInt("Number_Joining");
                 int maxParticipants = rs.getInt("Max_Participants");
-
                 boolean isFull = numberJoining >= maxParticipants;
-                boolean isClosed = !eventStatus.equalsIgnoreCase("Approved");
+                boolean isClosed = !eventStatus.equalsIgnoreCase("Upcoming");
     %>
-
     <div class="event-container">
         <div class="event-header">
             <div class="event-title"><%= eventName %></div>
@@ -104,14 +95,10 @@
             <label>Registered Participants:</label>
             <span><%= numberJoining %> / <%= maxParticipants %></span>
         </div>
-
         <div class="event-buttons">
+          
             <%
-                if (isClosed) {
-            %>
-            <div class="event-details no-spots">This event is closed for registration.</div>
-            <%
-                } else if (isFull) {
+                 if (isFull) {
             %>
             <div class="event-details no-spots">Registration is full. No more spots available.</div>
             <%
@@ -130,7 +117,6 @@
             %>
         </div>
     </div>
-
     <%
             }
         } catch (Exception e) {
@@ -141,7 +127,6 @@
             if (con != null) con.close();
         }
     %>
-
     <a href="Event.jsp" class="back-button">Back to Events</a>
 </body>
 </html>
