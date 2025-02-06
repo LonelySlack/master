@@ -29,6 +29,7 @@
             <button type="submit" class="btn">LOG IN</button>
             <div class="text-center fs-6">
                 <p style=text-align:center><a href="ResetPassword.jsp">Forget password?</a> or <a href="Signup.jsp">Sign up</a></p>
+                 <p style=text-align:center><a href="LoginAdmin.jsp">Admin Login </a></p>
             </div>
         </form>
     </div>
