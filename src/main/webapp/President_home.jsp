@@ -6,110 +6,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>President Dashboard</title>
+    <link rel="icon" type="image/x-icon" href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
     <style>
         body {
+            margin: 0;
+            padding: 0;
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
         }
-        .navbar {
+        .welcome {
+            text-align: center;
+            margin: 40px 0;
+            color: white;
+        }
+        .welcome h1 {
+            font-size: 36px;
+        }
+        .cards {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #333;
-            color: white;
-            padding: 10px 20px;
-        }
-        .navbar h1 {
-            margin: 0;
-        }
-        .sidebar {
-            width: 250px;
-            background-color: #333;
-            color: white;
-            height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            overflow-y: auto;
-        }
-        .sidebar ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        .sidebar ul li {
-            padding: 15px;
-            border-bottom: 1px solid #444;
-            cursor: pointer;
-        }
-        .sidebar ul li:hover {
-            background-color: #575757;
-        }
-        .main-content {
-            margin-left: 250px;
-            padding: 20px;
-        }
-        .section {
-            display: none;
-        }
-        .section.active {
-            display: block;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 30px;
+            flex-wrap: wrap;
         }
         .card {
-            background-color: white;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+            flex: 1;
+            max-width: 300px;
+            min-width: 200px;
         }
-        .card h2 {
-            margin-top: 0;
+        .card h3 {
+            color: #00f2fe;
+            margin-bottom: 10px;
+        }
+        .card p {
+            color: #666;
+        }
+        .card a {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 15px;
+            background: #00f2fe;
+            color: white;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+        .card a:hover {
+            background: #4facfe;
+        }
+        .slideshow-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 30px;
+            flex-wrap: wrap;
         }
     </style>
 </head>
 <body>
-    <div class="navbar">
-        <h1>President Dashboard</h1>
-        <span>Welcome, <%= session.getAttribute("Name") %>!</span>
-    </div>
-    <div class="sidebar">
-        <ul>
-            <li onclick="showSection('club')">Club Management</li>
-            <li onclick="showSection('event')">Event Management</li>
-        </ul>
-    </div>
-    <div class="main-content">
-        <!-- Club Section -->
-        <div id="club" class="section active">
-            <div class="card">
-                <h2>Club Management</h2>
-                <button onclick="window.location.href='view_club.jsp'">View Club Details</button>
-                <button onclick="window.location.href='view_members.jsp'">View Club Members</button>
-            </div>
-        </div>
-
-        <!-- Event Section -->
-        <div id="event" class="section">
-            <div class="card">
-                <h2>Event Management</h2>
-                <button onclick="window.location.href='create_event.jsp'">Create Event</button>
-                <button onclick="window.location.href='view_events.jsp'">View Events</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function showSection(sectionId) {
-            const sections = document.querySelectorAll('.section');
-            sections.forEach(section => section.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-        }
-
-        // Default to showing the Club section on load
-        window.onload = () => showSection('club');
-    </script>
-
+    <script id="replace_with_navbar" src="nav.js"></script>
+    <%-- ✅ Prevent Caching --%>
     <%
         // Prevent browser caching
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -117,15 +79,20 @@
         response.setHeader("Expires", "0");
 
         // Validate session
-        HttpSession Session = request.getSession(false);
-        if (Session == null || Session.getAttribute("Student_ID") == null ||Session.getAttribute("Role_ID") == null || (int)Session.getAttribute("Role_ID") != 1) {
+        HttpSession userSession = request.getSession(false);
+        if (userSession == null || userSession.getAttribute("Student_ID") == null) {
             response.sendRedirect("Login.jsp");
             return;
         }
 
         // Retrieve session attributes
-        int studentId = (Integer) Session.getAttribute("Student_ID");
-        String studentName = (String) Session.getAttribute("Name");
+        String studentId = (String) userSession.getAttribute("Student_ID");
+        String studentName = (String) userSession.getAttribute("Name");
+
+        // Handle null student name
+        if (studentName == null) {
+            studentName = "Guest";
+        }
 
         // Database configuration
         String DB_URL = "jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC";
@@ -136,19 +103,24 @@
         PreparedStatement pst = null;
         ResultSet rs = null;
 
+        String clubName = "";
+        int clubId = -1;
+
         try {
             // Database connection
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
 
-            // Query to check if the logged-in student is a president
-            String query = "SELECT Club_ID FROM club WHERE President_ID = ?";
-            pst = con.prepareStatement(query);
-            pst.setInt(1, studentId);
+            // Query to get the club details where the president is the logged-in user
+            String clubQuery = "SELECT Club_ID, Club_Name FROM club WHERE President_ID = ?";
+            pst = con.prepareStatement(clubQuery);
+            pst.setString(1, studentId);
             rs = pst.executeQuery();
 
-            if (!rs.next()) {
-                // Redirect if the student is not a president
+            if (rs.next()) {
+                clubId = rs.getInt("Club_ID");
+                clubName = rs.getString("Club_Name");
+            } else {
                 response.sendRedirect("AccessDenied.jsp");
                 return;
             }
@@ -160,5 +132,34 @@
             try { if (con != null) con.close(); } catch (SQLException e) { /* Ignored */ }
         }
     %>
+    <div class="welcome">
+        <h1>Welcome, <%= studentName %>!</h1>
+        <p>You are the president of <strong><%= clubName %></strong>. What would you like to do today?</p>
+    </div>
+
+    <!-- ✅ Actionable Cards -->
+    <div class="cards">
+        <!-- Club Management -->
+        <div class="card">
+            <h3>View Club Details</h3>
+            <p>View detailed information about your club.</p>
+            <a href="view_club.jsp?Club_ID=<%= clubId %>">View Club</a>
+        </div>
+        <div class="card">
+            <h3>View Club Members</h3>
+            <p>Manage and view members of your club.</p>
+            <a href="view_members.jsp?Club_ID=<%= clubId %>">View Members</a>
+        </div>
+        <div class="card">
+            <h3>Create Event</h3>
+            <p>Create a new event for your club.</p>
+            <a href="create_event.jsp?Club_ID=<%= clubId %>">Create Event</a>
+        </div>
+        <div class="card">
+            <h3>View Events</h3>
+            <p>View all events organized by your club.</p>
+            <a href="view_events.jsp?Club_ID=<%= clubId %>">View Events</a>
+        </div>
+    </div>
 </body>
 </html>
