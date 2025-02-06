@@ -98,47 +98,19 @@
     <!-- ✅ Actionable Cards -->
     <div class="cards">
         <!-- Club Management -->
-        <div class="card">
-            <h3>Create New Club</h3>
-            <p>Create a new club for students to join.</p>
-            <a href="create_club.html">Create Now</a>
-        </div>
-        <div class="card">
-            <h3>Club Application</h3>
-            <p>Review and manage club applications.</p>
-            <a href="club_application.html">Manage Applications</a>
-        </div>
-        <div class="card">
-            <h3>Club Status</h3>
-            <p>Check the status of all clubs.</p>
-            <a href="club_status.html">View Status</a>
-        </div>
-        <div class="card">
+             <div class="card">
             <h3>Club Details</h3>
             <p>View detailed information about each club.</p>
             <a href="Admin_clubdetails.jsp">View Details</a>
         </div>
-        <div class="card">
-            <h3>Club Members</h3>
-            <p>Manage members of each club.</p>
-            <a href="club_member.html">Manage Members</a>
-        </div>
-        <div class="card">
-            <h3>Assign Club President</h3>
-            <p>Assign or change the president of a club.</p>
-            <a href="assign_president.html">Assign President</a>
-        </div>
+     
+      
  		<div class="card">
             <h3>View Club President Application </h3>
             <p>Details the president Application.</p>
-            <a href="Applicationpresident.jsp">View Application </a>
+            <a href="Admin_Applicationpresident.jsp">View Application </a>
         </div>
-        <!-- Event Management -->
-        <div class="card">
-            <h3>Create Event</h3>
-            <p>Create a new event for students to attend.</p>
-            <a href="create_event.html">Create Now</a>
-        </div>
+   
         <div class="card">
             <h3>Event Application</h3>
             <p>Review and manage event applications.</p>
@@ -147,7 +119,7 @@
         <div class="card">
             <h3>Event Details</h3>
             <p>View detailed information about each event.</p>
-            <a href="event_details.html">View Details</a>
+            <a href="Admin_eventdetails.jsp">View Details</a>
         </div>
     </div>
 </body>

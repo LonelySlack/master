@@ -68,6 +68,22 @@
             font-size: 18px;
             margin-top: 20px;
         }
+        
+            .back-button {
+            display: block;
+            width: 100px;
+            margin: 20px auto;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -109,7 +125,7 @@
                     );
 
                     // ✅ Fetch all pending events
-                    String query = "SELECT * FROM event WHERE Event_Status = 'Pending'";
+                    String query = "SELECT * FROM event WHERE Event_Status = 'Pending' " ;
                     pst = con.prepareStatement(query);
                     rs = pst.executeQuery();
 
@@ -123,7 +139,7 @@
                 <td><%= rs.getDate("Event_Date") %></td>
                 <td><%= rs.getString("Event_Desc") %></td>
                 <td><%= rs.getString("Event_Location") %></td>
-                <td><%= rs.getInt("Club_ID") %></td>
+                <td><%= rs.getString("Club_ID") %></td>
                 <td><%= rs.getString("Event_Status") %></td>
                 <td>
                     <!-- ✅ Approve Event -->
@@ -168,6 +184,7 @@
                 }
             %>
         </table>
+        <a href="Admin_home.jsp" class="back-button">Back to Dashboard</a>
     </div>
 </body>
 </html>
