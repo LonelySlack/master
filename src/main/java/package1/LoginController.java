@@ -61,7 +61,7 @@ public class LoginController extends HttpServlet {
 
                     if (roleId == 1 && clubId != null) { // Role_ID = 1 indicates President
                         session.setAttribute("Club_ID", clubId); // Store the Club_ID in session
-                        response.sendRedirect("welcomePresident.jsp");
+                        response.sendRedirect("President_home.jsp");
                     } else {
                         response.sendRedirect("welcome.jsp");
                     }
