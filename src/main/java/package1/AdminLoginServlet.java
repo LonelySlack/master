@@ -59,7 +59,7 @@ public class AdminLoginServlet extends HttpServlet {
                     request.getSession().setAttribute("Admin_Name", adminName);
 
                     // Redirect to welcomeAdmin.jsp
-                    response.sendRedirect("welcomeAdmin.jsp");
+                    response.sendRedirect("Admin_home.jsp");
                 } else {
                     // Invalid credentials
                     request.setAttribute("errorMessage", "Invalid Admin ID or Password.");
