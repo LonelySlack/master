@@ -2,6 +2,7 @@ package package1;
 
 import java.io.IOException;
 import java.sql.*;
+import java.time.LocalDate;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -73,6 +74,8 @@ public class RegisterForEventServlet extends HttpServlet {
                 response.getWriter().println("<script>alert('You have already joined this event.');window.location.href='vieweventdetails.jsp?Event_ID=" + eventId + "';</script>");
                 return;
             }
+            rs.close();
+            pst.close();
 
             // Fetch current number of participants and max participants
             String fetchEventDetailsQuery = "SELECT Number_Joining, Max_Participants FROM event WHERE Event_ID = ?";
@@ -87,6 +90,8 @@ public class RegisterForEventServlet extends HttpServlet {
 
             int numberJoining = rs.getInt("Number_Joining");
             int maxParticipants = rs.getInt("Max_Participants");
+            rs.close();
+            pst.close();
 
             if (numberJoining >= maxParticipants) {
                 response.getWriter().println("<script>alert('Registration is full. No more spots available.');window.location.href='vieweventdetails.jsp?Event_ID=" + eventId + "';</script>");
@@ -98,16 +103,19 @@ public class RegisterForEventServlet extends HttpServlet {
             pst = con.prepareStatement(updateParticipantsQuery);
             pst.setInt(1, eventId);
             pst.executeUpdate();
+            pst.close();
 
-            // Insert the student into the student_event table
-            String insertRegistrationQuery = "INSERT INTO student_event (Student_ID, Event_ID) VALUES (?, ?)";
+            // Insert the student into the student_event table with Join_Date
+            String insertRegistrationQuery = "INSERT INTO student_event (Student_ID, Event_ID, Join_Date) VALUES (?, ?, ?)";
             pst = con.prepareStatement(insertRegistrationQuery);
             pst.setString(1, studentId);
             pst.setInt(2, eventId);
+            pst.setDate(3, Date.valueOf(LocalDate.now())); // ✅ Fix: Set Join_Date to today's date
             pst.executeUpdate();
+            pst.close();
 
             // Check if the event is now full and close it
-            if (numberJoining + 1 <= maxParticipants) {
+            if (numberJoining + 1 >= maxParticipants) {
                 String closeEventQuery = "UPDATE event SET Event_Status = 'Closed' WHERE Event_ID = ?";
                 pst = con.prepareStatement(closeEventQuery);
                 pst.setInt(1, eventId);
