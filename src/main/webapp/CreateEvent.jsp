@@ -66,29 +66,27 @@
         <h1>Create Event</h1>
 
         <% 
-            // Use the implicit session object (No need to declare it)
+            // ✅ Validate session and Club_ID
             if (session == null || session.getAttribute("Student_ID") == null || session.getAttribute("Club_ID") == null) {
                 response.sendRedirect("Login.jsp");
                 return;
             }
 
-            // Fix: Ensure Club_ID is retrieved safely
+            // ✅ Ensure Club_ID is retrieved properly
+            int clubId = -1;
             Object clubIdObj = session.getAttribute("Club_ID");
-            Integer clubId = null;
-
-            if (clubIdObj instanceof Integer) {
-                clubId = (Integer) clubIdObj;
-            } else if (clubIdObj instanceof String) {
+            
+            if (clubIdObj != null) {
                 try {
-                    clubId = Integer.parseInt((String) clubIdObj);
+                    clubId = Integer.parseInt(clubIdObj.toString());
                 } catch (NumberFormatException e) {
                     response.sendRedirect("Login.jsp");
                     return;
                 }
             }
 
-            // Ensure clubId is not null
-            if (clubId == null) {
+            // ✅ Ensure Club_ID is valid
+            if (clubId == -1) {
                 response.sendRedirect("Login.jsp");
                 return;
             }
@@ -101,7 +99,7 @@
             </div>
             <div class="form-field">
                 <label for="eventDate">Event Date</label>
-                <input type="date" id="eventDate" name="eventDate" required>
+                <input type="date" id="eventDate" name="eventDate" required min="<%= java.time.LocalDate.now() %>">
             </div>
             <div class="form-field">
                 <label for="eventDesc">Event Description</label>
@@ -110,6 +108,10 @@
             <div class="form-field">
                 <label for="eventLocation">Event Location</label>
                 <input type="text" id="eventLocation" name="eventLocation" placeholder="Enter the event location" required>
+            </div>
+            <div class="form-field">
+                <label for="maxParticipants">Max Participants</label>
+                <input type="number" id="maxParticipants" name="maxParticipants" placeholder="Enter max participants" required min="1">
             </div>
             <div class="form-field">
                 <button type="submit">Create Event</button>

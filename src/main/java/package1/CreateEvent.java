@@ -29,43 +29,61 @@ public class CreateEvent extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
 
-        // Retrieve the existing session
+        // ✅ Retrieve session and validate
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("Student_ID") == null || session.getAttribute("Club_ID") == null) {
             response.sendRedirect("Login.jsp");
             return;
         }
 
-        // Get parameters from the request
+        // ✅ Extract form parameters
         String eventName = request.getParameter("eventName");
         String eventDate = request.getParameter("eventDate");
         String eventDesc = request.getParameter("eventDesc");
         String eventLocation = request.getParameter("eventLocation");
-        Integer clubId = (Integer) session.getAttribute("Club_ID");
+        String maxParticipantsStr = request.getParameter("maxParticipants");
 
-        // Validate input
+        // ✅ Ensure Club_ID is valid
+        int clubId = Integer.parseInt(session.getAttribute("Club_ID").toString());
+
+        // ✅ Validate inputs
         if (eventName == null || eventName.trim().isEmpty() || 
             eventDate == null || eventDate.trim().isEmpty() || 
             eventDesc == null || eventDesc.trim().isEmpty() || 
-            eventLocation == null || eventLocation.trim().isEmpty()) {
+            eventLocation == null || eventLocation.trim().isEmpty() || 
+            maxParticipantsStr == null || maxParticipantsStr.trim().isEmpty()) {
+            
             response.getWriter().println("<script>alert('All fields are required. Please fill out the form completely.');window.location.href='CreateEvent.jsp';</script>");
             return;
         }
 
-        // Insert event into the database
+        int maxParticipants;
+        try {
+            maxParticipants = Integer.parseInt(maxParticipantsStr);
+            if (maxParticipants <= 0) {
+                throw new NumberFormatException("Invalid participant number.");
+            }
+        } catch (NumberFormatException e) {
+            response.getWriter().println("<script>alert('Invalid number of participants.');window.location.href='CreateEvent.jsp';</script>");
+            return;
+        }
+
+        // ✅ Insert event into the database
         try (Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            String insertEventQuery = "INSERT INTO event (Event_Name, Event_Date, Event_Desc, Event_Location, Event_Status, Club_ID, Admin_ID) " +
-                                      "VALUES (?, ?, ?, ?, 'Upcoming', ?, 1)";
+            String insertEventQuery = "INSERT INTO event (Event_Name, Event_Date, Event_Desc, Event_Location, Event_Status, Club_ID, Admin_ID, Max_Participants, Number_Joining) " +
+                                      "VALUES (?, ?, ?, ?, 'Pending', ?, 1, ?, 0)"; // Default: Pending Approval
+
             try (PreparedStatement pst = con.prepareStatement(insertEventQuery)) {
                 pst.setString(1, eventName.trim());
                 pst.setString(2, eventDate.trim());
                 pst.setString(3, eventDesc.trim());
                 pst.setString(4, eventLocation.trim());
                 pst.setInt(5, clubId);
+                pst.setInt(6, maxParticipants);
 
                 int rowsInserted = pst.executeUpdate();
                 if (rowsInserted > 0) {
-                    response.getWriter().println("<script>alert('Event created successfully!');window.location.href='President_home.jsp';</script>");
+                    response.getWriter().println("<script>alert('Event submitted for approval!');window.location.href='President_home.jsp';</script>");
                 } else {
                     response.getWriter().println("<script>alert('Failed to create the event. Please try again later.');window.location.href='CreateEvent.jsp';</script>");
                 }

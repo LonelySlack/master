@@ -142,7 +142,7 @@
         <div class="card">
             <h3>Event Application</h3>
             <p>Review and manage event applications.</p>
-            <a href="event_application.html">Manage Applications</a>
+            <a href="Admin_ApproveEvent.jsp">Manage Applications</a>
         </div>
         <div class="card">
             <h3>Event Details</h3>

@@ -1,15 +1,15 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.sql.*"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="java.sql.*" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Club Events</title>
-        <link rel="icon" type="image/x-icon" href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
+    <link rel="icon" type="image/x-icon" href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: linear-gradient(to right,  #4facfe, #00f2fe);
+            background: linear-gradient(to right, #4facfe, #00f2fe);
             color: #333;
             margin: 0;
             padding: 20px;
@@ -74,35 +74,43 @@
 
 <%-- ✅ Prevent Caching --%>
 <%
-    // Set HTTP headers to prevent caching
-    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
-    response.setHeader("Pragma", "no-cache"); // HTTP 1.0
-    response.setHeader("Expires", "0"); // Proxies
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+    response.setHeader("Pragma", "no-cache");
+    response.setHeader("Expires", "0");
 %>
 
-    <script id="replace_with_navbar" src="nav.js"></script>
-    <h1>Upcoming Club Events</h1>
-    <%
-        String studentId = (String) session.getAttribute("Student_ID");
-        if (studentId == null) {
-            response.sendRedirect("Login.jsp");
-            return;
-        }
+<script id="replace_with_navbar" src="nav.js"></script>
+<h1>Upcoming Club Events</h1>
 
-        boolean hasEvents = false;
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            Connection con = DriverManager.getConnection("jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC", "u9946_Kmmw1Vvrcg", "V6y2rsxfO0B636FUWqU^Ia=F");
+<%
+    // ✅ Validate session
+    String studentId = (String) session.getAttribute("Student_ID");
+    if (studentId == null) {
+        response.sendRedirect("Login.jsp");
+        return;
+    }
 
-            // Fetch all events for clubs
-            String query = "SELECT e.Event_ID, e.Event_Name, e.Event_Date, e.Event_Desc, c.Club_Name FROM event e JOIN club c ON e.Club_ID = c.Club_ID ORDER BY e.Event_Date ASC";
-            PreparedStatement pst = con.prepareStatement(query);
-            ResultSet rs = pst.executeQuery();
-    %>
-    <%
-            while (rs.next()) {
-                hasEvents = true;
-    %>
+    boolean hasEvents = false;
+    Connection con = null;
+    PreparedStatement pst = null;
+    ResultSet rs = null;
+
+    try {
+        Class.forName("com.mysql.jdbc.Driver");
+        con = DriverManager.getConnection("jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC", "u9946_Kmmw1Vvrcg", "V6y2rsxfO0B636FUWqU^Ia=F");
+
+        // ✅ Fetch only approved events
+        String query = "SELECT e.Event_ID, e.Event_Name, e.Event_Date, e.Event_Desc, c.Club_Name " +
+                       "FROM event e JOIN club c ON e.Club_ID = c.Club_ID " +
+                       "WHERE e.Event_Status = 'Approved' " +
+                       "ORDER BY e.Event_Date ASC";
+
+        pst = con.prepareStatement(query);
+        rs = pst.executeQuery();
+
+        while (rs.next()) {
+            hasEvents = true;
+%>
     <div class="event-container">
         <div class="event-header">
             <div class="event-title"><%= rs.getString("Event_Name") %></div>
@@ -115,19 +123,26 @@
             <a href="vieweventdetails.jsp?Event_ID=<%= rs.getInt("Event_ID") %>" class="event-button">View Details</a>
         </div>
     </div>
-    <%
-            }
-            rs.close();
-            pst.close();
-            con.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+<%
         }
-        if (!hasEvents) {
-    %>
-    <div class="no-events">No upcoming events are currently available.</div>
-    <%
-        }
-    %>
+
+    } catch (Exception e) {
+        e.printStackTrace();
+%>
+    <div class="no-events">Error loading events. Please try again later.</div>
+<%
+    } finally {
+        if (rs != null) rs.close();
+        if (pst != null) pst.close();
+        if (con != null) con.close();
+    }
+
+    if (!hasEvents) {
+%>
+    <div class="no-events">No approved events are currently available.</div>
+<%
+    }
+%>
+
 </body>
 </html>

@@ -180,9 +180,14 @@
             <a href="Profile.jsp">Go to Profile</a>
         </div>
         <div class="card">
-            <h3>Apply to be Club President</h3>
-            <p>Lead a club and organize amazing activities.</p>
-            <a href="ApplyClubPresident.jsp">Apply Now</a>
+            <h3>View Your Club</h3>
+            <p>Check the club you’ve joined.</p>
+            <a href="Student_ViewClub.jsp">View Club</a>
+        </div>
+        <div class="card">
+            <h3>View Club Members</h3>
+            <p>See the members of your club.</p>
+            <a href="Student_ViewClubMembers.jsp">View Members</a>
         </div>
     </div>
 </body>
