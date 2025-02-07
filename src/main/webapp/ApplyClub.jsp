@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apply for Clubs</title>
+    <link rel="icon" type="image/x-icon" href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -67,6 +68,21 @@
             color: green;
             text-align: center;
             font-size: 16px;
+        }
+        .back-button {
+            display: block;
+            width: 100px;
+            margin: 20px auto;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -214,5 +230,6 @@
         }
         %>
     </table>
+    <a href="welcome.jsp" class="back-button">Back to Home</a>
 </body>
 </html>

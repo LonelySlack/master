@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Clubs</title>
+    <link rel="icon" type="image/x-icon" href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -50,6 +51,40 @@
             text-align: center;
             font-size: 16px;
         }
+        .back-button {
+            display: block;
+            width: 100px;
+            margin: 20px auto;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background-color: #45a049;
+        }
+        .view-button {
+	    background-color: #4caf50;
+	    color: white;
+	    padding: 8px 25px; /* Increased horizontal padding */
+	    border: none;
+	    border-radius: 5px;
+	    cursor: pointer;
+	    text-decoration: none;
+	    display: inline-block;
+	    min-width: 120px; /* Ensures a minimum width for shorter text */
+	    white-space: nowrap; /* Prevents text from wrapping */
+	    text-align: center; /* Keeps text centered */
+	    font-size: 14px; /* Ensure text is readable */
+	    transition: background-color 0.3s ease; /* Smooth hover effect */
+		}
+	
+		.view-button:hover {
+		    background-color: #45a049; /* Darker green on hover */
+		}
     </style>
 </head>
 <body>
@@ -111,7 +146,7 @@
             <td><%= rs.getString("Club_Desc").length() > 50 ? rs.getString("Club_Desc").substring(0, 50) + "..." : rs.getString("Club_Desc") %></td>
             <td><%= rs.getDate("Club_Est_Date") %></td>
             <td>
-                <a href="viewclubdescription.jsp?Club_ID=<%= rs.getInt("Club_ID") %>">View Description</a>
+                <a href="viewclubdescription.jsp?Club_ID=<%= rs.getInt("Club_ID") %>" class="view-button">View Description</a>
             </td>
         </tr>
         <%
@@ -131,5 +166,6 @@
         }
         %>
     </table>
+    <div><a href="welcome.jsp" class="back-button">Back to Home</a></div>
 </body>
 </html>

@@ -94,6 +94,21 @@
         .center-text {
             text-align: center;
         }
+        .back-button {
+            display: block;
+            width: 100px;
+            margin: 20px auto;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
@@ -191,5 +206,6 @@
 
        
     </div>
+    <div><a href="President_home.jsp" class="back-button">Back to Home</a></div>
 </body>
 </html>

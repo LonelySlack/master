@@ -53,6 +53,7 @@
     </style>
 </head>
 <body>
+<script id="replace_with_adminnavbar" src="adminnavbar.js"></script>
     <div class="container">
         <h1>Student Details</h1>
 

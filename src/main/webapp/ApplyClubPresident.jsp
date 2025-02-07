@@ -80,9 +80,25 @@
         .create-club-btn:hover {
             background-color: #45a049;
         }
+        .back-button {
+            display: block;
+            width: 100px;
+            margin: 20px auto;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background-color: #45a049;
+        }
     </style>
 </head>
 <body>
+<script id="replace_with_navbar" src="nav.js"></script>
     <div class="wrapper">
         <h1>Apply to be Club President</h1>
 
@@ -157,5 +173,6 @@
         </div>
         <% } %>
     </div>
+    <div><a href="viewclub.jsp" class="back-button">Back to Clubs</a></div>
 </body>
 </html>

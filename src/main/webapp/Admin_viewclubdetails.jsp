@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>President Club Description</title>
-    <link rel="icon" type="image/x-icon" href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
+    <title>Club Description</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -51,60 +50,55 @@
     </style>
 </head>
 <body>
-   <script id="replace_with_presidentnavbar" src="presidentnavbar.js"></script>
+    <script id="replace_with_adminnavbar" src="adminnavbar.js"></script>
     <h1>Club Description</h1>
     <%
-        String studentId = (String) session.getAttribute("Student_ID");
-        if (studentId == null) {
-            response.sendRedirect("Login.jsp");
+        String adminId = (String) session.getAttribute("Admin_ID");
+        if (adminId == null) {
+            response.sendRedirect("LoginAdmin.jsp");
             return;
         }
         String clubIdParam = request.getParameter("Club_ID");
         if (clubIdParam == null || clubIdParam.isEmpty()) {
-            response.sendRedirect("President_home.jsp");
+            response.sendRedirect("Admin_clubdetails.jsp");
             return;
         }
         int clubId = Integer.parseInt(clubIdParam);
         Connection con = null;
         PreparedStatement pst = null;
         ResultSet rs = null;
-
         try {
             Class.forName("com.mysql.jdbc.Driver");
             con = DriverManager.getConnection("jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC", "u9946_Kmmw1Vvrcg", "V6y2rsxfO0B636FUWqU^Ia=F");
-
-            // Query to check if the logged-in student is the president of the club
-            String query = "SELECT c.Club_Name, c.Club_Desc, c.Club_Est_Date FROM club c WHERE c.Club_ID = ? AND c.President_ID = ?";
+            String query = "SELECT Club_Name, Club_Desc, Club_Est_Date FROM club WHERE Club_ID = ?";
             pst = con.prepareStatement(query);
             pst.setInt(1, clubId);
-            pst.setString(2, studentId);
             rs = pst.executeQuery();
-
             if (rs.next()) {
     %>
-
+    
     <%-- ✅ Prevent Caching --%>
-    <%
-        // Set HTTP headers to prevent caching
-        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
-        response.setHeader("Pragma", "no-cache"); // HTTP 1.0
-        response.setHeader("Expires", "0"); // Proxies
+<%
+    // Set HTTP headers to prevent caching
+    response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+    response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+    response.setHeader("Expires", "0"); // Proxies
 
-        // Validate Session
-        if (session == null || session.getAttribute("Student_ID") == null) {
-            response.sendRedirect("Login.jsp"); // Redirect if session is invalid
-            return;
-        }
+    // Validate Session
+    if (session == null || session.getAttribute("Admin_ID") == null) {
+        response.sendRedirect("LoginAdmin.jsp"); // Redirect if session is invalid
+        return;
+    }
 
-        // Retrieve session attributes
-        String studentName = (String) session.getAttribute("Name");
+    // Retrieve session attributes
+    String adminName = (String) session.getAttribute("Name");
 
-        // Ensure name is not null
-        if (studentName == null) {
-            studentName = "Guest";
-        }
-    %>
-
+    // Ensure name is not null
+    if (adminName == null) {
+        adminName = "Guest";
+    }
+%>
+    
     <div class="club-container">
         <div class="club-info">
             <label>Club Name:</label>
@@ -121,7 +115,7 @@
     </div>
     <%
             } else {
-                response.sendRedirect("President_home.jsp");
+                response.sendRedirect("ViewClubs.jsp");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -131,6 +125,6 @@
             if (con != null) con.close();
         }
     %>
-    <a href="President_home.jsp" class="back-button">Back to Dashboard</a>
+    <a href="Admin_clubdetails.jsp" class="back-button">Back to Clubs</a>
 </body>
 </html>
