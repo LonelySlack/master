@@ -4,13 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>All Clubs</title>
+    <title>Club Details</title>
     <link rel="icon" type="image/x-icon" href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
     <style>
         body {
             font-family: Arial, sans-serif;
             background: linear-gradient(to right, #4facfe, #00f2fe);
-            color: #333;
             margin: 0;
             padding: 20px;
         }
@@ -18,55 +17,76 @@
             text-align: center;
             color: #fff;
         }
-        .club-container {
-            width: 90%;
-            margin: 0 auto;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+        .status-message {
             text-align: center;
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         th, td {
-            border: 1px solid #ddd;
             padding: 10px;
             text-align: center;
+            border: 1px solid #ddd;
         }
         th {
-            background-color: #4caf50;
+            background-color: #00f2fe;
             color: white;
         }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-        .status-active {
-            color: green;
-            font-weight: bold;
-        }
-        .status-inactive {
-            color: red;
-            font-weight: bold;
-        }
-        .view-button {
-            background-color: #4caf50;
-            color: white;
-            padding: 8px 12px;
-            border: none;
+        select, button {
+            padding: 5px 10px;
             border-radius: 5px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
+            border: 1px solid #ddd;
         }
-        .view-button:hover {
+        button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
             background-color: #45a049;
+        }
+        .no-data {
+            color: red;
+            font-size: 16px;
+            text-align: center;
+            padding: 20px;
+        }
+        .view-details-btn {
+            background-color: #00f2fe;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        .view-details-btn:hover {
+            background-color: #4facfe;
+        }
+        .reject-btn {
+            background-color: #f44336;
+        }
+        .reject-btn:hover {
+            background-color: #e53935;
         }
         .back-button {
             display: block;
@@ -86,65 +106,93 @@
     </style>
 </head>
 <body>
-    <script id="replace_with_adminnavbar" src="adminnavbar.js"></script>
-    <h1>All Clubs</h1>
-
-    <div class="club-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Club Name</th>
-                    <th>Category</th>
-                    <th>Email</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <%
-                    Connection con = null;
-                    PreparedStatement pst = null;
-                    ResultSet rs = null;
-
-                    try {
-                        Class.forName("com.mysql.jdbc.Driver");
-                        con = DriverManager.getConnection("jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC", "u9946_Kmmw1Vvrcg", "V6y2rsxfO0B636FUWqU^Ia=F");
-
-                        String query = "SELECT Club_ID, Club_Name, Club_Category, Club_Email, Club_Status FROM club";
-                        pst = con.prepareStatement(query);
-                        rs = pst.executeQuery();
-
-                        while (rs.next()) {
-                            int clubId = rs.getInt("Club_ID");
-                            String clubName = rs.getString("Club_Name");
-                            String clubCategory = rs.getString("Club_Category");
-                            String clubEmail = rs.getString("Club_Email");
-                            String clubStatus = rs.getString("Club_Status");
-                %>
-                <tr>
-                    <td><%= clubName %></td>
-                    <td><%= clubCategory %></td>
-                    <td><%= clubEmail %></td>
-                    <td class="<%= "Active".equals(clubStatus) ? "status-active" : "status-inactive" %>">
-                        <%= clubStatus %>
-                    </td>
-                    <td>
-                        <a href="Admin_viewclubdetails.jsp?Club_ID=<%= clubId %>" class="view-button">View Details</a>
-                    </td>
-                </tr>
-                <%
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    } finally {
-                        try { if (rs != null) rs.close(); } catch (SQLException ignored) { }
-                        try { if (pst != null) pst.close(); } catch (SQLException ignored) { }
-                        try { if (con != null) con.close(); } catch (SQLException ignored) { }
-                    }
-                %>
-            </tbody>
-        </table>
+<script id="replace_with_adminnavbar" src="adminnavbar.js"></script>
+<%-- Display success or error message if redirected from UpdateClubServlet --%>
+<%
+    String message = request.getParameter("message");
+    String status = request.getParameter("status");
+    if (message != null && !message.isEmpty()) {
+%>
+    <div class="status-message <%= "success".equals(status) ? "success" : "error" %>">
+        <%= message %>
     </div>
-    <div><a href="Admin_home.jsp" class="back-button">Back to Dashboard</a></div>
+<% } %>
+
+<h1>Club Details</h1>
+<table>
+    <tr>
+        <th>Club ID</th>
+        <th>Club Name</th>
+        <th>Description</th>
+        <th>Email</th>
+        <th>Category</th>
+        <th>Status</th>
+        <th>President Name</th>
+        <th>Actions</th>
+    </tr>
+    <%
+        boolean hasData = false; // To check if data exists
+        try {
+            // Load JDBC driver
+            Class.forName("com.mysql.jdbc.Driver");
+            // Database connection (Use correct DB credentials)
+            String DB_URL = "jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC";
+            String DB_USER = "u9946_Kmmw1Vvrcg";
+            String DB_PASSWORD = "V6y2rsxfO0B636FUWqU^Ia=F";
+
+            Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            // Query to fetch all clubs with president details
+            String query = "SELECT c.Club_ID, c.Club_Name, c.Club_Desc, c.Club_Email, c.Club_Category, c.Club_Status, s.Name AS President_Name " +
+                           "FROM club c " +
+                           "LEFT JOIN student s ON c.President_ID = s.Student_ID";
+            PreparedStatement pst = con.prepareStatement(query);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                hasData = true; // Flag to indicate data exists
+    %>
+    <tr>
+        <td><%= rs.getInt("Club_ID") %></td>
+        <td><%= rs.getString("Club_Name") %></td>
+        <td><%= rs.getString("Club_Desc").length() > 50 ? rs.getString("Club_Desc").substring(0, 50) + "..." : rs.getString("Club_Desc") %></td>
+        <td><%= rs.getString("Club_Email") %></td>
+        <td><%= rs.getString("Club_Category") %></td>
+        <td><strong style="<%= "Active".equals(rs.getString("Club_Status")) ? "color: green;" : "color: red;" %>">
+            <%= rs.getString("Club_Status") %></strong>
+        </td>
+        <td><%= rs.getString("President_Name") != null ? rs.getString("President_Name") : "No President Assigned" %></td>
+        <td>
+            <!-- Update Status Dropdown -->
+            <form action="UpdateClubStatusServlet" method="post" style="display: inline-block;">
+                <input type="hidden" name="Club_ID" value="<%= rs.getInt("Club_ID") %>">
+                <select name="Club_Status" onchange="this.form.submit()">
+                    <option value="Active" <%= "Active".equals(rs.getString("Club_Status")) ? "selected" : "" %>>Active</option>
+                    <option value="Inactive" <%= "Inactive".equals(rs.getString("Club_Status")) ? "selected" : "" %>>Inactive</option>
+                </select>
+            </form>
+        </td>
+    </tr>
+    <%
+            }
+            rs.close();
+            pst.close();
+            con.close();
+        } catch (Exception e) {
+    %>
+    <tr>
+        <td colspan="8" class="no-data">Error: <%= e.getMessage() %></td>
+    </tr>
+    <%
+            e.printStackTrace();
+        }
+        if (!hasData) {
+    %>
+    <tr>
+        <td colspan="8" class="no-data">No clubs found.</td>
+    </tr>
+    <%
+        }
+    %>
+</table>
+ <a href="Admin_home.jsp" class="back-button">Back to Dashboard</a>
 </body>
 </html>

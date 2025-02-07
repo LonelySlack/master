@@ -7,6 +7,7 @@
     <title>Event Details</title>
     <link rel="icon" type="image/x-icon" href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
     <style>
+        /* Existing styles remain unchanged */
         body {
             font-family: Arial, sans-serif;
             background: linear-gradient(to right, #4facfe, #00f2fe);
@@ -16,23 +17,6 @@
         h1 {
             text-align: center;
             color: #fff;
-        }
-        .status-message {
-            text-align: center;
-            font-size: 16px;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
         }
         table {
             width: 100%;
@@ -51,15 +35,18 @@
             background-color: #00f2fe;
             color: white;
         }
-        select, button {
+        select {
             padding: 5px 10px;
             border-radius: 5px;
             border: 1px solid #ddd;
+            cursor: pointer;
         }
         button {
             background-color: #4caf50;
             color: white;
             border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
             cursor: pointer;
         }
         button:hover {
@@ -71,24 +58,7 @@
             text-align: center;
             padding: 20px;
         }
-        .view-details-btn {
-            background-color: #00f2fe;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            border: none;
-            cursor: pointer;
-        }
-        .view-details-btn:hover {
-            background-color: #4facfe;
-        }
-        .reject-btn {
-            background-color: #f44336;
-        }
-        .reject-btn:hover {
-            background-color: #e53935;
-        }
-             .back-button {
+        .back-button {
             display: block;
             width: 100px;
             margin: 20px auto;
@@ -107,17 +77,6 @@
 </head>
 <body>
 <script id="replace_with_adminnavbar" src="adminnavbar.js"></script>
-<%-- Display success or error message if redirected from UpdateEventServlet --%>
-<%
-    String message = request.getParameter("message");
-    String status = request.getParameter("status");
-    if (message != null && !message.isEmpty()) {
-%>
-    <div class="status-message <%= "success".equals(status) ? "success" : "error" %>">
-        <%= message %>
-    </div>
-<% } %>
-
 <h1>Event Details</h1>
 <table>
     <tr>
@@ -128,7 +87,6 @@
         <th>Location</th>
         <th>Status</th>
         <th>Club Name</th>
-       
     </tr>
     <%
         boolean hasData = false; // To check if data exists
@@ -139,7 +97,6 @@
             String DB_URL = "jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC";
             String DB_USER = "u9946_Kmmw1Vvrcg";
             String DB_PASSWORD = "V6y2rsxfO0B636FUWqU^Ia=F";
-
             Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
             // Query to fetch all events with club details
             String query = "SELECT e.Event_ID, e.Event_Name, e.Event_Date, e.Event_Desc, e.Event_Location, e.Event_Status, c.Club_Name " +
@@ -149,6 +106,7 @@
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 hasData = true; // Flag to indicate data exists
+                String eventStatus = rs.getString("Event_Status"); // Get the status from the database
     %>
     <tr>
         <td><%= rs.getInt("Event_ID") %></td>
@@ -156,11 +114,20 @@
         <td><%= rs.getDate("Event_Date") %></td>
         <td><%= rs.getString("Event_Desc").length() > 50 ? rs.getString("Event_Desc").substring(0, 50) + "..." : rs.getString("Event_Desc") %></td>
         <td><%= rs.getString("Event_Location") %></td>
-        <td><strong style="<%= "Completed".equals(rs.getString("Event_Status")) ? "color: green;" : "color: red;" %>">
-            <%= rs.getString("Event_Status") %></strong>
+        <td>
+            <!-- Status Dropdown -->
+            <form action="UpdateEventStatusServlet" method="post" style="display: inline-block;">
+                <input type="hidden" name="Event_ID" value="<%= rs.getInt("Event_ID") %>">
+                <select name="Event_Status" onchange="this.form.submit()">
+                    <option value="Pending" <%= "Pending".equals(eventStatus) ? "selected" : "" %>>Pending</option>
+                    <option value="Approved" <%= "Approved".equals(eventStatus) ? "selected" : "" %>>Approved</option>
+                    <option value="Upcoming" <%= "Upcoming".equals(eventStatus) ? "selected" : "" %>>Upcoming</option>
+                    <option value="Completed" <%= "Completed".equals(eventStatus) ? "selected" : "" %>>Completed</option>
+                </select>
+            </form>
         </td>
         <td><%= rs.getString("Club_Name") %></td>
-         </tr>
+    </tr>
     <%
             }
             rs.close();
@@ -183,6 +150,6 @@
         }
     %>
 </table>
-<a href="Admin_home.jsp" class="back-button">Back to Dashboard</a>
+ <a href="Admin_home.jsp" class="back-button">Back to Dashboard</a>
 </body>
 </html>

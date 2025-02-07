@@ -104,7 +104,7 @@
         // ✅ Fetch only approved events
         String query = "SELECT e.Event_ID, e.Event_Name, e.Event_Date, e.Event_Desc, c.Club_Name " +
                        "FROM event e JOIN club c ON e.Club_ID = c.Club_ID " +
-                       "WHERE e.Event_Status = 'Approved' " +
+                       "WHERE e.Event_Status = 'Approved'OR e.Event_Status = 'Upcoming' " +
                        "ORDER BY e.Event_Date ASC";
 
         pst = con.prepareStatement(query);
