@@ -17,7 +17,28 @@
             align-items: center;
             height: 100vh;
             overflow: hidden;
-            background: linear-gradient(135deg, #4b0082, #ffcc00);
+            position: relative;
+        }
+
+        /* Video Background */
+        .video-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100vw;
+            height: 100vh;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
         }
 
         /* Container Styling */
@@ -29,6 +50,8 @@
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             max-width: 600px;
             animation: fadeIn 1.5s ease-in-out;
+            position: relative;
+            z-index: 1;
         }
 
         /* Heading Styling */
@@ -99,6 +122,9 @@
     </style>
 </head>
 <body>
+    <div class="video-container">
+        <iframe src="https://www.youtube.com/embed/AxNUivqB5HY?autoplay=1&mute=1&loop=1&playlist=AxNUivqB5HY" frameborder="0" allowfullscreen></iframe>
+    </div>
     <div class="container">
         <h1>Welcome to TCMS</h1>
         <p>
