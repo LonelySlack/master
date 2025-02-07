@@ -123,7 +123,7 @@
 </head>
 <body>
     <div class="video-container">
-        <iframe src="https://www.youtube.com/embed/AxNUivqB5HY?autoplay=1&mute=1&loop=1&playlist=AxNUivqB5HY" frameborder="0" allowfullscreen></iframe>
+        <iframe src="https://www.youtube.com/embed/AxNUivqB5HY?autoplay=1&mute=1&loop=1&playlist=AxNUivqB5HY&start=62" frameborder="0" allowfullscreen></iframe>
     </div>
     <div class="container">
         <h1>Welcome to TCMS</h1>
