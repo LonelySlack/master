@@ -17,8 +17,7 @@
             align-items: center;
             height: 100vh;
             overflow: hidden;
-            background-image: url('https://www.google.com/url?sa=i&url=https%3A%2F%2Fsebenarnya.my%2Fuitm%2F&psig=AOvVaw3s_TTQmKU0TD-H-ju8iM2K&ust=1739040050027000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCKCMk5absosDFQAAAAAdAAAAABAE') no-repeat center center fixed;
-            background-size: cover;
+            background: linear-gradient(135deg, #4b0082, #ffcc00);
         }
 
         /* Container Styling */
@@ -35,7 +34,7 @@
         /* Heading Styling */
         h1 {
             font-size: 3rem;
-            color: #00f2fe;
+            color: #4b0082;
             margin-bottom: 20px;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -52,7 +51,7 @@
         /* Button Styling */
         .btn {
             display: inline-block;
-            background-color: #00f2fe;
+            background-color: #4b0082;
             color: white;
             padding: 12px 25px;
             text-decoration: none;
@@ -63,16 +62,9 @@
         }
 
         .btn:hover {
-            background-color: #4facfe;
+            background-color: #ffcc00;
             transform: scale(1.05);
-        }
-
-        .btn-secondary {
-            background-color: #ff7e5f;
-        }
-
-        .btn-secondary:hover {
-            background-color: #ff5c38;
+            color: #4b0082;
         }
 
         /* Links Styling */
@@ -83,13 +75,13 @@
         .links a {
             margin: 0 10px;
             text-decoration: none;
-            color: #00f2fe;
+            color: #4b0082;
             font-weight: bold;
             transition: color 0.3s ease;
         }
 
         .links a:hover {
-            color: #4facfe;
+            color: #ffcc00;
             text-decoration: underline;
         }
 
@@ -114,7 +106,6 @@
             Join us to explore exciting opportunities and enhance your skills!
         </p>
         <a href="Login.jsp" class="btn">Login</a>
-      
     </div>
 </body>
 </html>
