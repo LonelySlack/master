@@ -74,6 +74,27 @@
                 boolean isFull = numberJoining >= maxParticipants;
                 boolean isClosed = !eventStatus.equalsIgnoreCase("Upcoming");
     %>
+     <%-- ✅ Prevent Caching --%>
+    <%
+        // Prevent browser caching
+        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        response.setHeader("Pragma", "no-cache");
+        response.setHeader("Expires", "0");
+
+        // Validate session
+        if (session == null || session.getAttribute("Student_ID") == null) {
+            response.sendRedirect("Login.jsp");
+            return;
+        }
+
+        // Retrieve session attributes
+        String studentName = (String) session.getAttribute("Name");
+
+        // Handle null student name
+        if (studentName == null) {
+            studentName = "Guest";
+        }
+    %>
     <div class="event-container">
         <div class="event-header">
             <div class="event-title"><%= eventName %></div>
