@@ -26,7 +26,7 @@ public class UpdateClubStatusServlet extends HttpServlet {
             throw new RuntimeException("MySQL JDBC Driver not found.", e);
         }
     }
-
+//test
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
