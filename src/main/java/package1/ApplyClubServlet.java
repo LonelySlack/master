@@ -30,11 +30,15 @@ public class ApplyClubServlet extends HttpServlet
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
     {
+    	response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
+        response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+        response.setHeader("Expires", "0"); // Proxies
+
         String studentId = request.getParameter("Student_ID");
         String clubIdStr = request.getParameter("Club_ID");
 
         if (studentId == null || clubIdStr == null) {
-            response.sendRedirect("ApplyClub.jsp?error=Invalid request.");
+        	response.getWriter().println("<script>alert('Invalid Request');window.location.href='ApplyClub.jsp';</script>");
             return;
         }
 
@@ -42,7 +46,7 @@ public class ApplyClubServlet extends HttpServlet
         try {
             clubId = Integer.parseInt(clubIdStr.trim());
         } catch (NumberFormatException e) {
-            response.sendRedirect("ApplyClub.jsp?error=Invalid club ID.");
+        	response.getWriter().println("<script>alert('Invalid club ID');window.location.href='ApplyClub.jsp';</script>");
             return;
         }
 
@@ -60,7 +64,7 @@ public class ApplyClubServlet extends HttpServlet
             rs = pst.executeQuery();
 
             if (rs.next() && rs.getInt("Membership_Count") > 0) {
-                response.sendRedirect("ApplyClub.jsp?error=You can only join one club.");
+            	response.getWriter().println("<script>alert('You can only join one club!');window.location.href='ApplyClub.jsp';</script>");
                 return;
             }
 
@@ -71,11 +75,11 @@ public class ApplyClubServlet extends HttpServlet
             pst.setInt(2, clubId);
             pst.executeUpdate();
 
-            response.sendRedirect("ApplyClub.jsp?success=Your application has been submitted successfully.");
+            response.getWriter().println("\"<script>alert('Your Application have been successfully sumbited');window.location.href='ApplyClub.jsp';</script>\"");
 
         } catch (SQLException e) {
             e.printStackTrace();
-            response.sendRedirect("ApplyClub.jsp?error=An error occurred while processing your request.");
+            response.getWriter().println("<script>alert('An error occured when processing your request');window.location.href='ApplyClub.jsp';</script>");
         } finally {
             try {
                 if (rs != null) rs.close();
