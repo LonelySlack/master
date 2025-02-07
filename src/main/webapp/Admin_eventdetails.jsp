@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Event Details</title>
+    <title>Club Details</title>
     <link rel="icon" type="image/x-icon" href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
     <style>
         body {
@@ -88,26 +88,11 @@
         .reject-btn:hover {
             background-color: #e53935;
         }
-             .back-button {
-            display: block;
-            width: 100px;
-            margin: 20px auto;
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
-            text-decoration: none;
-        }
-        .back-button:hover {
-            background-color: #45a049;
-        }
     </style>
 </head>
 <body>
 <script id="replace_with_adminnavbar" src="adminnavbar.js"></script>
-<%-- Display success or error message if redirected from UpdateEventServlet --%>
+<%-- Display success or error message if redirected from UpdateClubServlet --%>
 <%
     String message = request.getParameter("message");
     String status = request.getParameter("status");
@@ -118,17 +103,17 @@
     </div>
 <% } %>
 
-<h1>Event Details</h1>
+<h1>Club Details</h1>
 <table>
     <tr>
-        <th>Event ID</th>
-        <th>Event Name</th>
-        <th>Event Date</th>
-        <th>Description</th>
-        <th>Location</th>
-        <th>Status</th>
+        <th>Club ID</th>
         <th>Club Name</th>
-       
+        <th>Description</th>
+        <th>Email</th>
+        <th>Category</th>
+        <th>Status</th>
+        <th>President Name</th>
+        <th>Actions</th>
     </tr>
     <%
         boolean hasData = false; // To check if data exists
@@ -141,26 +126,36 @@
             String DB_PASSWORD = "V6y2rsxfO0B636FUWqU^Ia=F";
 
             Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            // Query to fetch all events with club details
-            String query = "SELECT e.Event_ID, e.Event_Name, e.Event_Date, e.Event_Desc, e.Event_Location, e.Event_Status, c.Club_Name " +
-                           "FROM event e " +
-                           "JOIN club c ON e.Club_ID = c.Club_ID";
+            // Query to fetch all clubs with president details
+            String query = "SELECT c.Club_ID, c.Club_Name, c.Club_Desc, c.Club_Email, c.Club_Category, c.Club_Status, s.Name AS President_Name " +
+                           "FROM club c " +
+                           "LEFT JOIN student s ON c.President_ID = s.Student_ID";
             PreparedStatement pst = con.prepareStatement(query);
             ResultSet rs = pst.executeQuery();
             while (rs.next()) {
                 hasData = true; // Flag to indicate data exists
     %>
     <tr>
-        <td><%= rs.getInt("Event_ID") %></td>
-        <td><%= rs.getString("Event_Name") %></td>
-        <td><%= rs.getDate("Event_Date") %></td>
-        <td><%= rs.getString("Event_Desc").length() > 50 ? rs.getString("Event_Desc").substring(0, 50) + "..." : rs.getString("Event_Desc") %></td>
-        <td><%= rs.getString("Event_Location") %></td>
-        <td><strong style="<%= "Completed".equals(rs.getString("Event_Status")) ? "color: green;" : "color: red;" %>">
-            <%= rs.getString("Event_Status") %></strong>
-        </td>
+        <td><%= rs.getInt("Club_ID") %></td>
         <td><%= rs.getString("Club_Name") %></td>
-         </tr>
+        <td><%= rs.getString("Club_Desc").length() > 50 ? rs.getString("Club_Desc").substring(0, 50) + "..." : rs.getString("Club_Desc") %></td>
+        <td><%= rs.getString("Club_Email") %></td>
+        <td><%= rs.getString("Club_Category") %></td>
+        <td><strong style="<%= "Active".equals(rs.getString("Club_Status")) ? "color: green;" : "color: red;" %>">
+            <%= rs.getString("Club_Status") %></strong>
+        </td>
+        <td><%= rs.getString("President_Name") != null ? rs.getString("President_Name") : "No President Assigned" %></td>
+        <td>
+            <!-- Update Status Dropdown -->
+            <form action="UpdateClubStatusServlet" method="post" style="display: inline-block;">
+                <input type="hidden" name="Club_ID" value="<%= rs.getInt("Club_ID") %>">
+                <select name="Club_Status" onchange="this.form.submit()">
+                    <option value="Active" <%= "Active".equals(rs.getString("Club_Status")) ? "selected" : "" %>>Active</option>
+                    <option value="Inactive" <%= "Inactive".equals(rs.getString("Club_Status")) ? "selected" : "" %>>Inactive</option>
+                </select>
+            </form>
+        </td>
+    </tr>
     <%
             }
             rs.close();
@@ -177,12 +172,11 @@
         if (!hasData) {
     %>
     <tr>
-        <td colspan="8" class="no-data">No events found.</td>
+        <td colspan="8" class="no-data">No clubs found.</td>
     </tr>
     <%
         }
     %>
 </table>
-<a href="Admin_home.jsp" class="back-button">Back to Dashboard</a>
 </body>
 </html>
