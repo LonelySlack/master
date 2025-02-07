@@ -1,72 +1,87 @@
 package package1;
 
-import java.io.IOException;
-
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@WebServlet(name = "ApplyClubServlet", urlPatterns = { "/ApplyClubServlet" })
-public class ApplyClubServlet extends HttpServlet {
+import java.io.IOException;
+import java.sql.*;
+//test
+@WebServlet(name = "ApplyClubServlet", urlPatterns = {"/ApplyClubServlet"})
+public class ApplyClubServlet extends HttpServlet 
+{
     private static final long serialVersionUID = 1L;
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html; charset=UTF-8");
+    // Database connection details
+    private static final String DB_URL = "jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC";
+    private static final String DB_USER = "u9946_Kmmw1Vvrcg";
+    private static final String DB_PASSWORD = "V6y2rsxfO0B636FUWqU^Ia=F";
 
-        // Retrieve parameters from the form
+    static {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("MySQL JDBC Driver not found.", e);
+        }
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
+    {
         String studentId = request.getParameter("Student_ID");
-        String clubId = request.getParameter("Club_ID");
+        String clubIdStr = request.getParameter("Club_ID");
+
+        if (studentId == null || clubIdStr == null) {
+            response.sendRedirect("ApplyClub.jsp?error=Invalid request.");
+            return;
+        }
+
+        int clubId;
+        try {
+            clubId = Integer.parseInt(clubIdStr.trim());
+        } catch (NumberFormatException e) {
+            response.sendRedirect("ApplyClub.jsp?error=Invalid club ID.");
+            return;
+        }
 
         Connection con = null;
         PreparedStatement pst = null;
         ResultSet rs = null;
 
         try {
-            // Load JDBC driver and establish connection
-            Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC", "u9946_Kmmw1Vvrcg", "V6y2rsxfO0B636FUWqU^Ia=F");
+            con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
 
-            // Check if the student has already applied to the club
-            String checkQuery = "SELECT COUNT(*) AS Application_Count FROM club_member WHERE Student_ID = ? AND Club_ID = ?";
-            pst = con.prepareStatement(checkQuery);
+            // Check if the student is already a member of any club
+            String checkMembershipQuery = "SELECT COUNT(*) AS Membership_Count FROM club_member WHERE Student_ID = ?";
+            pst = con.prepareStatement(checkMembershipQuery);
             pst.setString(1, studentId);
-            pst.setString(2, clubId);
             rs = pst.executeQuery();
 
-            if (rs.next() && rs.getInt("Application_Count") > 0) {
-                // Redirect with an error message if already applied
-                response.sendRedirect("ApplyClub.jsp?error=AlreadyApplied");
+            if (rs.next() && rs.getInt("Membership_Count") > 0) {
+                response.sendRedirect("ApplyClub.jsp?error=You can only join one club.");
                 return;
             }
 
-            // Insert into club_member table with Pending status and default role as Member
-            String insertQuery = "INSERT INTO club_member (Student_ID, Club_ID, Member_Status, Register_Date, Role_ID) VALUES (?, ?, ?, NOW(), ?)";
+            // Insert the application into the club_member table
+            String insertQuery = "INSERT INTO club_member (Student_ID, Club_ID, Member_Status, Register_Date, Role_ID) VALUES (?, ?, 'Pending', CURDATE(), 2)";
             pst = con.prepareStatement(insertQuery);
             pst.setString(1, studentId);
-            pst.setString(2, clubId);
-            pst.setString(3, "Pending");
-            pst.setInt(4, 4); // Role ID 4 is assumed to be 'Member'
+            pst.setInt(2, clubId);
             pst.executeUpdate();
 
-            // Redirect to a success page or back to the club application page
-            response.sendRedirect("ApplyClub.jsp?success=ApplicationSuccessful");
-        } catch (Exception e) {
+            response.sendRedirect("ApplyClub.jsp?success=Your application has been submitted successfully.");
+
+        } catch (SQLException e) {
             e.printStackTrace();
-            // Forward to an error page or display an error message
-            request.setAttribute("errorMessage", "Error occurred while applying for the club. Please try again.");
-            request.getRequestDispatcher("ApplyClub.jsp").forward(request, response);
+            response.sendRedirect("ApplyClub.jsp?error=An error occurred while processing your request.");
         } finally {
             try {
                 if (rs != null) rs.close();
                 if (pst != null) pst.close();
                 if (con != null) con.close();
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }
