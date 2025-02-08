@@ -220,6 +220,16 @@
             </form>
         </div>
     </div>
-    <a href="welcome.jsp" class="back-button">Back to Home</a>
+    <%
+        if ("president".equals(roleName)) {
+    %>
+    <a href="President_home.jsp" class="back-button">Back to Home</a>
+    <%
+        } else {
+    %>
+     <a href="welcome.jsp" class="back-button">Back to Home</a>
+    <%
+        }
+    %>
 </body>
 </html>
