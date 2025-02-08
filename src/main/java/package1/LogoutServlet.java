@@ -31,7 +31,7 @@ public class LogoutServlet extends HttpServlet {
         out.println("<title>Logout</title>");
         out.println("<script type=\"text/javascript\">");
         out.println("alert('You have been logged out successfully!');");
-        out.println("window.location.href = 'Login.jsp';"); // Redirect to Login.jsp after the alert
+        out.println("window.location.href = 'Home.jsp';"); // Redirect to Login.jsp after the alert
         out.println("</script>");
         out.println("</head>");
         out.println("<body>");

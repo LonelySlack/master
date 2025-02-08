@@ -76,9 +76,8 @@ public class AdminProfileServlet extends HttpServlet {
                     session.setAttribute("Admin_Name", adminName);
                     session.setAttribute("Admin_Contact_Num", contactNumber);
 
-                    response.sendRedirect("Admin_Profile.jsp?message=Profile updated successfully!");
+                    response.sendRedirect("Admin_profile.jsp?message=Profile updated successfully!");
                 } else {
-                    response.sendRedirect("Admin_UpdateProfile.jsp?error=Failed to update profile.");
                 }
             }
         } catch (SQLException e) {

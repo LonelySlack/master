@@ -139,7 +139,8 @@
             The <strong>UCMS (UiTM Club Management System)</strong> is designed to help students manage club activities, events, and memberships efficiently. 
             Join us to explore exciting opportunities and enhance your skills!
         </p>
-        <a href="Login.jsp" class="btn">Login</a>
+        <a href="Login.jsp" class="btn">Student Login</a>
+        <a href="LoginAdmin.jsp" class="btn">Admin Login</a>
     </div>
 </body>
 </html>
