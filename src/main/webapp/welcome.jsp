@@ -8,11 +8,16 @@
     <title>Welcome Dashboard</title>
     <link rel="icon" type="image/x-icon" href="https://cdn-b.heylink.me/media/users/og_image/a1adb54527104a50ac887d6a299ee511.webp">
     <style>
+        /* General Styles */
         body {
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             background: linear-gradient(to right, #4facfe, #00f2fe);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .welcome {
             text-align: center;
@@ -20,8 +25,23 @@
             color: white;
         }
         .welcome h1 {
-            font-size: 36px;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
         }
+        .welcome p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Section Titles */
+        h2 {
+            text-align: center;
+            color: white;
+            font-size: 2rem;
+            margin: 30px 0 20px;
+        }
+
+        /* Slideshow Container */
         .slideshow-container {
             display: flex;
             justify-content: center;
@@ -29,6 +49,8 @@
             margin: 20px 30px;
             flex-wrap: wrap;
         }
+
+        /* Card Styling */
         .card {
             background: white;
             border-radius: 10px;
@@ -38,34 +60,61 @@
             flex: 1;
             max-width: 300px;
             min-width: 200px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
         }
         .card h3 {
             color: #00f2fe;
             margin-bottom: 10px;
+            font-size: 1.5rem;
         }
         .card p {
             color: #666;
+            font-size: 1rem;
+            margin-bottom: 15px;
         }
         .card a {
             display: inline-block;
             margin-top: 10px;
-            padding: 8px 15px;
+            padding: 10px 20px;
             background: #00f2fe;
             color: white;
             border-radius: 5px;
             text-decoration: none;
-            font-size: 14px;
+            font-size: 1rem;
             transition: background 0.3s ease;
         }
         .card a:hover {
             background: #4facfe;
         }
+
+        /* Cards Section */
         .cards {
             display: flex;
             justify-content: center;
             gap: 20px;
             margin: 20px 30px;
             flex-wrap: wrap;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .welcome h1 {
+                font-size: 2rem;
+            }
+            .welcome p {
+                font-size: 1rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            .card {
+                max-width: 100%;
+                min-width: 100%;
+            }
         }
     </style>
 </head>
@@ -77,17 +126,14 @@
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
         response.setHeader("Pragma", "no-cache");
         response.setHeader("Expires", "0");
-
         // Validate session
         if (session == null || session.getAttribute("Student_ID") == null) {
             response.sendRedirect("Login.jsp");
             return;
         }
-
         // Retrieve session attributes
         String studentId = (String) session.getAttribute("Student_ID");
         String studentName = (String) session.getAttribute("Name");
-
         // Handle null student name
         if (studentName == null) {
             studentName = "Guest";
@@ -99,30 +145,26 @@
     </div>
 
     <!-- ✅ Display Upcoming Events -->
-    <h2 style="text-align: center; color: white;">Upcoming Events</h2>
+    <h2>Upcoming Events</h2>
     <div class="slideshow-container">
         <%
             // Database configuration
             String DB_URL = "jdbc:mysql://139.99.124.197:3306/s9946_tcms?serverTimezone=UTC";
             String DB_USER = "u9946_Kmmw1Vvrcg";
             String DB_PASSWORD = "V6y2rsxfO0B636FUWqU^Ia=F";
-
             Connection con = null;
             PreparedStatement pst = null;
             ResultSet rs = null;
             boolean hasEvents = false;
-
             try {
                 // Database connection
                 Class.forName("com.mysql.jdbc.Driver");
                 con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-
                 // Query for upcoming events
                 String query = "SELECT Event_ID, Event_Name, Event_Desc, Event_Date FROM event WHERE Event_Status = ? ORDER BY Event_Date ASC LIMIT 3";
                 pst = con.prepareStatement(query);
                 pst.setString(1, "Upcoming"); // Filter for upcoming events
                 rs = pst.executeQuery();
-
                 // Display each event
                 while (rs.next()) {
                     hasEvents = true;
@@ -146,7 +188,6 @@
                 try { if (pst != null) pst.close(); } catch (SQLException e) { /* Ignored */ }
                 try { if (con != null) con.close(); } catch (SQLException e) { /* Ignored */ }
             }
-
             if (!hasEvents) {
         %>
         <div class="card">
@@ -159,7 +200,13 @@
     </div>
 
     <!-- ✅ Actionable Cards -->
+    <h2>Quick Actions</h2>
     <div class="cards">
+        <div class="card">
+            <h3>Club President</h3>
+            <p>Show your leadership skills.</p>
+            <a href="ApplyClubPresident.jsp">Apply Now !!!</a>
+        </div>
         <div class="card">
             <h3>View Clubs</h3>
             <p>Explore all the clubs available at your university.</p>
