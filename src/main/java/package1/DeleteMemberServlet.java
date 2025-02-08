@@ -39,6 +39,6 @@ public class DeleteMemberServlet extends HttpServlet {
         }
 
         // Redirect back to the welcomePresident.jsp page
-        response.sendRedirect("welcomePresident.jsp");
+        response.sendRedirect("President_clubmember.jsp");
     }
 }

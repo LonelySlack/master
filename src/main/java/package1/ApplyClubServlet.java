@@ -75,7 +75,7 @@ public class ApplyClubServlet extends HttpServlet
             pst.setInt(2, clubId);
             pst.executeUpdate();
 
-            response.getWriter().println("\"<script>alert('Your Application have been successfully sumbited');window.location.href='ApplyClub.jsp';</script>\"");
+            response.getWriter().println("<script>alert('Your Application have been successfully sumbited');window.location.href='ApplyClub.jsp';</script>");
 
         } catch (SQLException e) {
             e.printStackTrace();

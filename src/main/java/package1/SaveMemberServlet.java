@@ -39,7 +39,7 @@ public class SaveMemberServlet extends HttpServlet {
             pst.close();
             con.close();
 
-            response.sendRedirect("welcomePresident.jsp");
+            response.sendRedirect("President_clubmember.jsp");
         } catch (Exception e) {
             e.printStackTrace();
             response.sendRedirect("updateMember.jsp");
