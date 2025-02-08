@@ -85,7 +85,8 @@
         <th>Event Date</th>
         <th>Description</th>
         <th>Location</th>
-        <th>Status</th>
+        <th>Approval Status</th>
+        <th>Quota Status</th>
         <th>Club Name</th>
     </tr>
     <%
@@ -98,8 +99,19 @@
             String DB_USER = "u9946_Kmmw1Vvrcg";
             String DB_PASSWORD = "V6y2rsxfO0B636FUWqU^Ia=F";
             Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            // Query to fetch all events with club details
-            String query = "SELECT e.Event_ID, e.Event_Name, e.Event_Date, e.Event_Desc, e.Event_Location, e.Event_Status, c.Club_Name " +
+            // Query to fetch all events with club details and calculate QuotaStatus
+            String query = "SELECT " +
+                           "e.Event_ID, " +
+                           "e.Event_Name, " +
+                           "e.Event_Date, " +
+                           "e.Event_Desc, " +
+                           "e.Event_Location, " +
+                           "e.Event_Status, " +
+                           "c.Club_Name, " +
+                           "CASE " +
+                           "    WHEN e.Number_Joining < e.Max_Participants THEN 'Available' " +
+                           "    ELSE 'Closed' " +
+                           "END AS QuotaStatus " +
                            "FROM event e " +
                            "JOIN club c ON e.Club_ID = c.Club_ID";
             PreparedStatement pst = con.prepareStatement(query);
@@ -107,6 +119,7 @@
             while (rs.next()) {
                 hasData = true; // Flag to indicate data exists
                 String eventStatus = rs.getString("Event_Status"); // Get the status from the database
+                String quotaStatus = rs.getString("QuotaStatus"); // Get the calculated QuotaStatus
     %>
     <tr>
         <td><%= rs.getInt("Event_ID") %></td>
@@ -115,7 +128,7 @@
         <td><%= rs.getString("Event_Desc").length() > 50 ? rs.getString("Event_Desc").substring(0, 50) + "..." : rs.getString("Event_Desc") %></td>
         <td><%= rs.getString("Event_Location") %></td>
         <td>
-            <!-- Status Dropdown -->
+            <!-- Approval Status Dropdown -->
             <form action="UpdateEventStatusServlet" method="post" style="display: inline-block;">
                 <input type="hidden" name="Event_ID" value="<%= rs.getInt("Event_ID") %>">
                 <select name="Event_Status" onchange="this.form.submit()">
@@ -126,6 +139,7 @@
                 </select>
             </form>
         </td>
+        <td><%= quotaStatus %></td>
         <td><%= rs.getString("Club_Name") %></td>
     </tr>
     <%
@@ -136,7 +150,7 @@
         } catch (Exception e) {
     %>
     <tr>
-        <td colspan="8" class="no-data">Error: <%= e.getMessage() %></td>
+        <td colspan="9" class="no-data">Error: <%= e.getMessage() %></td>
     </tr>
     <%
             e.printStackTrace();
@@ -144,12 +158,12 @@
         if (!hasData) {
     %>
     <tr>
-        <td colspan="8" class="no-data">No events found.</td>
+        <td colspan="9" class="no-data">No events found.</td>
     </tr>
     <%
         }
     %>
 </table>
- <a href="Admin_home.jsp" class="back-button">Back to Dashboard</a>
+<a href="Admin_home.jsp" class="back-button">Back to Dashboard</a>
 </body>
 </html>
