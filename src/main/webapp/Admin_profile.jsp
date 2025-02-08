@@ -156,7 +156,7 @@
         </div>
 
         <div class="profile-button-container">
-            <form action="UpdateProfile.jsp" method="get">
+            <form action="Admin_UpdateProfile.jsp" method="get">
                 <button type="submit">Update Profile</button>
             </form>
             <form action="DeleteProfileServlet" method="post">
