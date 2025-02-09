@@ -86,7 +86,7 @@
     String adminName = (String) session.getAttribute("Admin_Name");
     String adminContactNumber = (String) session.getAttribute("Admin_Contact_Num");
 %>
-<script id="replace_with_navbar" src="nav.js"></script>
+    <script id="replace_with_adminnavbar" src="adminnavbar.js"></script>
 <div class="wrapper">
     <h2>Update Your Profile</h2>
     <%-- ✅ Display success or error messages --%>
