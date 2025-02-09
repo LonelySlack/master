@@ -150,7 +150,7 @@
     <div class="profile-container">
         <h1 class="profile-h1">Profile</h1>
         <div class="profile-details">
-            <p><strong>Student ID:</strong> <%= adminId %></p>
+            <p><strong>Admin ID:</strong> <%= adminId %></p>
             <p><strong>Name:</strong> <%= name %></p>
             <p><strong>Contact Number:</strong> <%= contactNumber %></p>
         </div>
