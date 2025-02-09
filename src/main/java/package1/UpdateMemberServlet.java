@@ -50,7 +50,7 @@ public class UpdateMemberServlet extends HttpServlet {
             con.close();
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("welcomePresident.jsp");
+            response.sendRedirect("President_clubmember.jsp");
         }
     }
 }

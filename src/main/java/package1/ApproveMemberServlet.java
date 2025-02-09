@@ -27,10 +27,10 @@ public class ApproveMemberServlet extends HttpServlet {
             pst.setInt(1, memberId);
 
             pst.executeUpdate();
-            response.sendRedirect("President_home.jsp");
+            response.sendRedirect("President_clubmember.jsp");
         } catch (Exception e) {
             e.printStackTrace();
-            response.sendRedirect("President_home.jsp?error=Approval failed.");
+            response.sendRedirect("President_clubmember.jsp?error=Approval failed.");
         } finally {
             try {
                 if (pst != null) pst.close();
