@@ -105,7 +105,7 @@
             }
         %>
 
-        <a href="welcomeAdmin.jsp" class="back-btn">Back to Dashboard</a>
+        <a href="Admin_Applicationpresident.jsp" class="back-btn">Back to Dashboard</a>
     </div>
 </body>
 </html>
