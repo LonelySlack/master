@@ -40,16 +40,16 @@ public class UpdateApprovalServlet extends HttpServlet {
                 int rowsUpdated = pst.executeUpdate();
 
                 if (rowsUpdated > 0) {
-                    response.sendRedirect("welcomeAdmin.jsp"); // Redirect back to the admin page
+                    response.sendRedirect("Admin_Applicationpresident.jsp"); // Redirect back to the admin page
                 } else {
                     request.setAttribute("errorMessage", "Failed to update the status.");
-                    request.getRequestDispatcher("welcomeAdmin.jsp").forward(request, response);
+                    request.getRequestDispatcher("Admin_Applicationpresident.jsp").forward(request, response);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "An error occurred while updating the status.");
-            request.getRequestDispatcher("welcomeAdmin.jsp").forward(request, response);
+            request.getRequestDispatcher("Admin_Applicationpresident.jsp").forward(request, response);
         }
     }
 }

@@ -64,7 +64,7 @@ public class CreateClub extends HttpServlet {
                 checkPst.setString(1, studentId);
                 try (ResultSet rs = checkPst.executeQuery()) {
                     if (rs.next() && rs.getInt(1) > 0) {
-                        response.getWriter().println("<script>alert('You are already a president of an existing club!');window.location.href='welcomePresident.jsp';</script>");
+                        response.getWriter().println("<script>alert('You are already a president of an existing club!');window.location.href='President_home.jsp';</script>");
                         return;
                     }
                 }
@@ -96,7 +96,7 @@ public class CreateClub extends HttpServlet {
 
                                 int memberInserted = memberPst.executeUpdate();
                                 if (memberInserted > 0) {
-                                    response.getWriter().println("<script>alert('Club created successfully! You have been added as the President.');window.location.href='welcomePresident.jsp';</script>");
+                                    response.getWriter().println("<script>alert('Club created successfully! You have been added as the President.');window.location.href='President_home.jsp';</script>");
                                 } else {
                                     response.getWriter().println("<script>alert('Failed to add you as the President. Please contact the administrator.');window.location.href='CreateClub.jsp';</script>");
                                 }
